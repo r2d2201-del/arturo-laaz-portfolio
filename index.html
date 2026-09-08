@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portafolio profesional de Arturo, editor de video y creador de contenido de alto impacto. Especializado en anuncios (Ads) de Facebook e Instagram, videos UGC, formato corto vertical (Reels, TikTok, Shorts) y edición para canales de YouTube con alta retención de audiencia.">
+    <meta name="keywords" content="edicion de video, editor de video, ugc video, facebook ads, instagram ads, videos verticales, creador de contenido, youtube editor, retencion de audiencia, ctr ads">
+    <meta name="author" content="Arturo">
+    <title>Arturo | Video Editor & UGC Ads Specialist | Portafolio Profesional</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Nav Bar Wrapper -->
+    <div class="navbar-wrapper" id="navbar-wrapper">
+        <header class="navbar" id="main-header">
+            <div class="nav-header">
+                <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
+                    <span class="hamburger-icon">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </span>
+                    <span class="menu-text" id="menu-text-label">Menu</span>
+                </button>
+                
+                <a href="#" class="nav-logo">ARTURO<span class="dot">.</span></a>
+                
+                <div class="nav-right-actions">
+                    <div class="lang-switcher">
+                        <button class="lang-opt active" data-lang="es">ES</button>
+                        <span class="lang-divider">/</span>
+                        <button class="lang-opt" data-lang="en">EN</button>
+                    </div>
+                    <a href="#contact" class="nav-btn-header" id="nav-cta-btn" data-i18n="nav_cta">Trabajar Conmigo</a>
+                </div>
+            </div>
+
+            <!-- Expanded Menu Panel (Osmo Style Grid) -->
+            <div class="nav-panel" id="nav-panel">
+                <div class="panel-grid">
+                    <div class="panel-col">
+                        <h4 data-i18n="panel_services_title">Servicios</h4>
+                        <a href="#portfolio" class="panel-link" data-filter-link="vertical" data-i18n="panel_services_vertical">Verticales / Reels</a>
+                        <a href="#portfolio" class="panel-link" data-filter-link="ugc-ads" data-i18n="panel_services_ugc">UGC & Ads</a>
+                        <a href="#portfolio" class="panel-link" data-filter-link="motion-graphics" data-i18n="panel_services_motion">Motion Graphics</a>
+                        <a href="#portfolio" class="panel-link" data-filter-link="youtube" data-i18n="panel_services_youtube">YouTube / Horizontales</a>
+                    </div>
+                    <div class="panel-col">
+                        <h4 data-i18n="panel_explore_title">Explorar</h4>
+                        <a href="#hero" class="panel-link" data-i18n="panel_explore_home">Inicio</a>
+                        <a href="#metrics" class="panel-link" data-i18n="panel_explore_philosophy">Filosofía</a>
+                        <a href="#portfolio" class="panel-link" data-i18n="panel_explore_portfolio">Portafolio</a>
+                        <a href="#process" class="panel-link" data-i18n="panel_explore_methodology">Metodología</a>
+                        <a href="#testimonials" class="panel-link" data-i18n="panel_explore_testimonials">Testimonios</a>
+                    </div>
+                    <div class="panel-col panel-contact">
+                        <h4 data-i18n="panel_contact_title">Hablemos</h4>
+                        <a href="mailto:arthur.the.videoeditor@gmail.com" class="panel-contact-link"><i class="fa-regular fa-envelope"></i> arthur.the.videoeditor@gmail.com</a>
+                        <a href="https://wa.me/593984558923" target="_blank" class="panel-contact-link"><i class="fa-brands fa-whatsapp"></i> 0984558923</a>
+                        <div class="panel-socials">
+                            <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                            <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                            <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
+                            <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Marquee Bar (Neon sliding text under header) -->
+        <div class="marquee-bar">
+            <div class="marquee-content">
+                <span>Al Garrido * StrapsCo * Team Pinguin *Gt Marbella * Cycle Barn * Wyndham Hotels * </span>
+                <span>Al Garrido * StrapsCo * Team Pinguin *Gt Marbella * Cycle Barn * Wyndham Hotels * </span>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        
+        <!-- Hero Section -->
+        <section class="hero-section" id="hero">
+            <div class="hero-container">
+                <div class="hero-text">
+                    <h1 class="hero-title" data-i18n="hero_title">VÍDEOS QUE <span class="highlight">RETIENEN</span>.<br>ANUNCIOS QUE <span class="highlight">CONVIERTEN</span>.</h1>
+                    <p class="hero-subtitle" data-i18n="hero_subtitle">Ayudo a creadores, marcas y agencias a escalar su producción de contenido y maximizar el CTR de sus campañas de publicidad mediante edición de video de alto impacto y retención garantizada.</p>
+                    <div class="hero-actions">
+                        <a href="#portfolio" class="hero-btn-primary" data-i18n="hero_btn_portfolio">Ver Portafolio <i class="fa-solid fa-arrow-down"></i></a>
+                        <a href="#contact" class="hero-btn-secondary" data-i18n="hero_btn_quote">Cotizar Proyecto</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="phone-mockup">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <video id="hero-preview-video" class="mockup-video" autoplay loop muted playsinline>
+                                <!-- HERO_VIDEO_START -->
+                                <source src="assets/previews/HERO__Alto Impacto__Animaciones Explicativas & Motion Graphics__Captura la atención en los primeros 3 segundos.mp4#t=0.001" type="video/mp4">
+                                <!-- HERO_VIDEO_END -->
+                                Tu navegador no soporta reproducción de video.
+                            </video>
+                            <div class="video-overlay-info">
+                                <!-- HERO_INFO_START -->
+                                <div class="badge"><i class="fa-solid fa-bolt"></i> Alto Impacto</div>
+                                <h3>Animaciones Explicativas & Motion Graphics</h3>
+                                <p>Captura la atención en los primeros 3 segundos</p>
+                                <!-- HERO_INFO_END -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Metrics Section (Enerblock Grid Style) -->
+        <section class="metrics-section" id="metrics">
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <h2 class="metric-number" data-i18n="metric1_title">Delega lo pesado</h2>
+                    <p class="metric-label" data-i18n="metric1_label">y concéntrate en tu negocio</p>
+                    <p class="metric-desc" data-i18n="metric1_desc">Escalar tu negocio requiere tiempo, y ocuparte de TODO te lo está impidiendo, ahí entro yo.</p>
+                </div>
+                <div class="metric-item">
+                    <h2 class="metric-number" data-i18n="metric2_title">Tú lo dices</h2>
+                    <p class="metric-label" data-i18n="metric2_label">yo lo hago</p>
+                    <p class="metric-desc" data-i18n="metric2_desc">Si tienes un estilo en mente, tu manual de marca o quieres que yo busque un estilo por ti, ahí estaré.</p>
+                </div>
+                <div class="metric-item">
+                    <h2 class="metric-number" data-i18n="metric3_title">Tu growth partner</h2>
+                    <p class="metric-label" data-i18n="metric3_label">tu crecimiento de verdad me importa</p>
+                    <p class="metric-desc" data-i18n="metric3_desc">Busco hacer lo posible para que tu contenido sea visto y escuchado, generar más ventas para tu negocio, tú solo dilo.</p>
+                </div>
+                <div class="metric-item">
+                    <h2 class="metric-number" data-i18n="metric4_title">Sin excusas</h2>
+                    <p class="metric-label" data-i18n="metric4_label">entregas que cumplen</p>
+                    <p class="metric-desc" data-i18n="metric4_desc">Sé lo importante que es la constancia para los algoritmos. Tus videos listos cuando los necesitas, con la máxima calidad.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section class="portfolio-section" id="portfolio">
+            <div class="section-header">
+                <h2 class="section-title" data-i18n="portfolio_title">PORTAFOLIO DE TRABAJOS</h2>
+                <p class="section-tagline" data-i18n="portfolio_tagline">Una selección de proyectos diseñados para rendir y retener audiencias.</p>
+                
+                <!-- Filters -->
+                <div class="portfolio-filters" id="portfolio-filters">
+                    <button class="filter-btn active" data-filter="all" data-i18n="filter_all">Todo</button>
+                    <button class="filter-btn" data-filter="vertical" data-i18n="filter_vertical">Verticales / Reels</button>
+                    <button class="filter-btn" data-filter="ugc-ads" data-i18n="filter_ugc">UGC & Ads</button>
+                    <button class="filter-btn" data-filter="motion-graphics" data-i18n="filter_motion">Motion Graphics</button>
+                    <button class="filter-btn" data-filter="youtube" data-i18n="filter_youtube">YouTube / Horizontales</button>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="portfolio-grid" id="portfolio-grid">
+                <!-- PORTFOLIO_GRID_ITEMS_START -->
+                <!-- Item: Follicle friday DHT -->
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="nZrfTONeO-o">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/01_YOUTUBE_nZrfTONeO-o_Follicle friday DHT_Content Creator_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">YouTube / Horizontales</span>
+                        <h3 class="card-title">Follicle friday DHT</h3>
+                        <div class="card-metric"><i class="fa-solid fa-users"></i> Content Creator</div>
+                    </div>
+                </div>
+                <!-- Item: 1 vs 1 million dollar pokemon items -->
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="K5YOoQ1x-Og">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/02_YOUTUBE_K5YOoQ1x-Og_1 vs 1 million dollar pokemon items_Cartoon type_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">YouTube / Horizontales</span>
+                        <h3 class="card-title">1 vs 1 million dollar pokemon items</h3>
+                        <div class="card-metric"><i class="fa-solid fa-users"></i> Cartoon type</div>
+                    </div>
+                </div>
+                <!-- Item: Most disturbing predator -->
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="ozBEJk8mE84">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/03_YOUTUBE_ozBEJk8mE84_most disturbing predator_Faceless Channel_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">YouTube / Horizontales</span>
+                        <h3 class="card-title">Most disturbing predator</h3>
+                        <div class="card-metric"><i class="fa-solid fa-users"></i> Faceless Channel</div>
+                    </div>
+                </div>
+                <!-- Item: Animaciones Explicativas & Motion Graphics -->
+                <div class="portfolio-card" data-category="motion-graphics" data-full-video="assets/videos/MOTION__Animaciones Explicativas & Motion Graphics__Diseño Visual Dinámico.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/04_MOTION__Animaciones Explicativas & Motion Graphics__Diseño Visual Dinámico_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">Motion Graphics</span>
+                        <h3 class="card-title">Animaciones Explicativas & Motion Graphics</h3>
+                        <div class="card-metric"><i class="fa-solid fa-wand-magic-sparkles"></i> Diseño Visual Dinámico</div>
+                    </div>
+                </div>
+                <!-- Item: Anuncio meta ADS -->
+                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/AD_Anuncio meta ADS_ Mejor rendimiento.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/AD_Anuncio meta ADS_ Mejor rendimiento_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">UGC & Ads</span>
+                        <h3 class="card-title">Anuncio meta ADS</h3>
+                        <div class="card-metric"><i class="fa-solid fa-chart-line"></i> Mejor rendimiento</div>
+                    </div>
+                </div>
+                <!-- Item: Anuncio para meta -->
+                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/AD_Anuncio para meta_Alto CTR.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/AD_Anuncio para meta_Alto CTR_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">UGC & Ads</span>
+                        <h3 class="card-title">Anuncio para meta</h3>
+                        <div class="card-metric"><i class="fa-solid fa-chart-line"></i> Alto CTR</div>
+                    </div>
+                </div>
+                <!-- Item: Productos o servicios -->
+                <div class="portfolio-card" data-category="ugc-ads">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/AD_Productos o servicios_Marca empresarial _previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">UGC & Ads</span>
+                        <h3 class="card-title">Productos o servicios</h3>
+                        <div class="card-metric"><i class="fa-solid fa-chart-line"></i> Marca empresarial</div>
+                    </div>
+                </div>
+                <!-- Item: Contenido para ADS -->
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL_Contenido para ADS_Alto rendimiento.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/REEL_Contenido para ADS_Alto rendimiento_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">Verticales / Reels</span>
+                        <h3 class="card-title">Contenido para ADS</h3>
+                        <div class="card-metric"><i class="fa-solid fa-eye"></i> Alto rendimiento</div>
+                    </div>
+                </div>
+                <!-- Item: LAMBORGHINI VIDEO EVENT -->
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL_LAMBORGHINI_VIDEO EVENT_Contenido de marca.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/REEL_LAMBORGHINI_VIDEO EVENT_Contenido de marca_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">Verticales / Reels</span>
+                        <h3 class="card-title">LAMBORGHINI VIDEO EVENT</h3>
+                        <div class="card-metric"><i class="fa-solid fa-eye"></i> Contenido de marca</div>
+                    </div>
+                </div>
+                <!-- Item: Seguro de vida -->
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL_Seguro de vida_Marca Personal.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/REEL_Seguro de vida_Marca Personal_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">Verticales / Reels</span>
+                        <h3 class="card-title">Seguro de vida</h3>
+                        <div class="card-metric"><i class="fa-solid fa-eye"></i> Marca Personal</div>
+                    </div>
+                </div>
+                <!-- Item: Video AD -->
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL__Video AD__Retención Alta.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/REEL__Video AD__Retención Alta__previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">Verticales / Reels</span>
+                        <h3 class="card-title">Video AD</h3>
+                        <div class="card-metric"><i class="fa-solid fa-eye"></i> Retención Alta</div>
+                    </div>
+                </div>
+                <!-- Item: Short de video largo -->
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/Reel_Short de video largo.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/Reel_Short de video largo_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">Verticales / Reels</span>
+                        <h3 class="card-title">Short de video largo</h3>
+                        <div class="card-metric"><i class="fa-solid fa-eye"></i> Ver Video</div>
+                    </div>
+                </div>
+                <!-- Item: Short de video long form -->
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/Reel_Short de video long form.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/Reel_Short de video long form_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">Verticales / Reels</span>
+                        <h3 class="card-title">Short de video long form</h3>
+                        <div class="card-metric"><i class="fa-solid fa-eye"></i> Ver Video</div>
+                    </div>
+                </div>
+                <!-- Item: Youtube Short Extract -->
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/Reel_Youtube Short Extract.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/Reel_Youtube Short Extract_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">Verticales / Reels</span>
+                        <h3 class="card-title">Youtube Short Extract</h3>
+                        <div class="card-metric"><i class="fa-solid fa-eye"></i> Ver Video</div>
+                    </div>
+                </div>
+                <!-- Item: Outdoor Garmin UGC Dacia -->
+                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/UGC_ Outdoor Garmin UGC Dacia.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/UGC_ Outdoor Garmin UGC Dacia_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">UGC & Ads</span>
+                        <h3 class="card-title">Outdoor Garmin UGC Dacia</h3>
+                        <div class="card-metric"><i class="fa-solid fa-chart-line"></i> Ver Video</div>
+                    </div>
+                </div>
+                <!-- Item: Matching your style UGC Allison -->
+                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/UGC_Matching your style UGC Allison_Alta retención.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/UGC_Matching your style UGC Allison_Alta retención_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">UGC & Ads</span>
+                        <h3 class="card-title">Matching your style UGC Allison</h3>
+                        <div class="card-metric"><i class="fa-solid fa-chart-line"></i> Alta retención</div>
+                    </div>
+                </div>
+                <!-- Item: Same watch new vibe UGC Corbin -->
+                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/UGC_Same watch-new vibe UGC Corbin_Alto rendimiento.mp4">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/UGC_Same watch-new vibe UGC Corbin_Alto rendimiento_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">UGC & Ads</span>
+                        <h3 class="card-title">Same watch new vibe UGC Corbin</h3>
+                        <div class="card-metric"><i class="fa-solid fa-chart-line"></i> Alto rendimiento</div>
+                    </div>
+                </div>
+                <!-- Item: 3 mistakes -->
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="dQw4w9WgXcQ">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/YOUTUBE_3 mistakes_Content Creator_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">YouTube / Horizontales</span>
+                        <h3 class="card-title">3 mistakes</h3>
+                        <div class="card-metric"><i class="fa-solid fa-users"></i> Content Creator</div>
+                    </div>
+                </div>
+                <!-- Item: Cf Moto 675ss -->
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="9xX3NSx8Y1I">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/YOUTUBE_9xX3NSx8Y1I_Cf Moto 675ss_Youtube Brand_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">YouTube / Horizontales</span>
+                        <h3 class="card-title">Cf Moto 675ss</h3>
+                        <div class="card-metric"><i class="fa-solid fa-users"></i> Youtube Brand</div>
+                    </div>
+                </div>
+                <!-- Item: Contenido de nicho -->
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="INJWilDjGm0">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/YOUTUBE_INJWilDjGm0_Contenido de nicho_Faceless Channel_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">YouTube / Horizontales</span>
+                        <h3 class="card-title">Contenido de nicho</h3>
+                        <div class="card-metric"><i class="fa-solid fa-users"></i> Faceless Channel</div>
+                    </div>
+                </div>
+                <!-- Item: When Scoring A Goal Got A Player Executed -->
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="N2RC40ZEYTg">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/YOUTUBE_N2RC40ZEYTg_When Scoring A Goal Got A Player Executed_Faceless Cahnnel_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">YouTube / Horizontales</span>
+                        <h3 class="card-title">When Scoring A Goal Got A Player Executed</h3>
+                        <div class="card-metric"><i class="fa-solid fa-users"></i> Faceless Cahnnel</div>
+                    </div>
+                </div>
+                <!-- Item: Follicle Friday -->
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="PIq5rBiZjJk">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/YOUTUBE_PIq5rBiZjJk_Follicle Friday_Content Creator_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">YouTube / Horizontales</span>
+                        <h3 class="card-title">Follicle Friday</h3>
+                        <div class="card-metric"><i class="fa-solid fa-users"></i> Content Creator</div>
+                    </div>
+                </div>
+                <!-- Item: Pyrilutamide -->
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="a-7tnHy99eI">
+                    <div class="card-media">
+                        <div class="video-container-card">
+                            <video class="card-video-preview" loop muted playsinline preload="metadata">
+                                <source src="assets/previews/YOUTUBE_a-7tnHy99eI_Pyrilutamide_Contect Creator_previews.mp4#t=0.001" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="card-overlay">
+                            <span class="play-icon"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-category">YouTube / Horizontales</span>
+                        <h3 class="card-title">Pyrilutamide</h3>
+                        <div class="card-metric"><i class="fa-solid fa-users"></i> Contect Creator</div>
+                    </div>
+                </div>
+                <!-- PORTFOLIO_GRID_ITEMS_END -->
+            </div>
+
+            <!-- Botón Ver Más -->
+            <div class="portfolio-load-more">
+                <button id="load-more-btn" class="load-more-btn">
+                    <span data-i18n="load_more_btn">Ver más trabajos</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Process Section -->
+        <section class="process-section" id="process">
+            <div class="process-container">
+                <h2 class="section-title" data-i18n="process_title">MI METODOLOGÍA</h2>
+                <p class="section-tagline" data-i18n="process_tagline">Tres etapas sencillas para llevar tus videos al siguiente nivel.</p>
+                
+                <div class="process-grid">
+                    <div class="process-step">
+                        <span class="step-num">01</span>
+                        <h3 class="step-title" data-i18n="step1_title">Estrategia & Brief</h3>
+                        <p class="step-desc" data-i18n="step1_desc">Analizamos el objetivo del video: ¿es retención orgánica o conversión directa de pauta? Definimos el ritmo, ganchos iniciales y entregas el material en bruto mediante una carpeta compartida.</p>
+                    </div>
+                    <div class="process-step">
+                        <span class="step-num">02</span>
+                        <h3 class="step-title" data-i18n="step2_title">Edición Premium</h3>
+                        <p class="step-desc" data-i18n="step2_desc">Manos a la obra. Incorporo ganchos de retención visual en los primeros 3 segundos, o en el primer minuto (YOUTUBE) subtítulos animados estilizados, sound design inmersivo, efectos gráficos dinámicos y corrección de color.</p>
+                    </div>
+                    <div class="process-step">
+                        <span class="step-num">03</span>
+                        <h3 class="step-title" data-i18n="step3_title">Revisión & Entrega</h3>
+                        <p class="step-desc" data-i18n="step3_desc">Te envío el primer corte para que lo revises y envíes tu feedback,para ajustes rápidos y precisos. Te entrego los archivos finales renderizados en máxima calidad y optimizados para cada red social.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials-section" id="testimonials">
+            <div class="testimonials-container">
+                <h2 class="section-title" data-i18n="testimonials_title">LO QUE DICEN MIS CLIENTES</h2>
+                <p class="section-tagline" data-i18n="testimonials_tagline">Opiniones de creadores y marcas que ya escalaron su contenido.</p>
+                
+                <div class="testimonials-slider-container">
+                    <div class="testimonials-slider" id="testimonials-slider">
+                        
+                        <!-- Slide 1 -->
+                        <div class="testimonial-slide active">
+                            <div class="testimonial-rating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="testimonial-text" data-i18n="testimonial1_text">"La retención de nuestros reels aumentó drásticamente desde que trabajamos con Arturo. Pasamos de tener 15% de usuarios viendo hasta el final a más de un 45%. Su edición es dinámica y entiende perfectamente lo que capta el ojo en móvil."</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar"><i class="fa-solid fa-user-tie"></i></div>
+                                <div class="author-meta">
+                                    <h4>Carlos Mendoza</h4>
+                                    <p data-i18n="testimonial1_role">Creador de Finanzas & Info-productor</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2 -->
+                        <div class="testimonial-slide">
+                            <div class="testimonial-rating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="testimonial-text" data-i18n="testimonial2_text">"Nuestros costes por clic (CPC) bajaron a la mitad con los creativos UGC que nos editó Arturo. Su capacidad para colocar subtítulos animados y transiciones rápidas es increíble. Totalmente recomendado si corres anuncios."</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar"><i class="fa-solid fa-building"></i></div>
+                                <div class="author-meta">
+                                    <h4>Sofía Rivas</h4>
+                                    <p data-i18n="testimonial2_role">Directora de Ad-Growth en Nova Media</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 3 -->
+                        <div class="testimonial-slide">
+                            <div class="testimonial-rating">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="testimonial-text" data-i18n="testimonial3_text">"Trabajar con Arturo es una tranquilidad inmensa. Entrega siempre a tiempo, acepta comentarios constructivos y su criterio de edición de sonido es de nivel cinematográfico. Mi canal de YouTube ha crecido un 30%."</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar"><i class="fa-solid fa-user-ninja"></i></div>
+                                <div class="author-meta">
+                                    <h4>Marcos 'Kael' Gómez</h4>
+                                    <p data-i18n="testimonial3_role">Youtuber de Tecnología (250K+ subs)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Slider Nav -->
+                    <div class="slider-controls">
+                        <button class="slider-btn prev" id="slider-prev" aria-label="Anterior"><i class="fa-solid fa-arrow-left"></i></button>
+                        <button class="slider-btn next" id="slider-next" aria-label="Siguiente"><i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact-section" id="contact">
+            <div class="contact-container">
+                <div class="contact-layout">
+                    <div class="contact-text">
+                        <h2 class="section-title" data-i18n="contact_title">¿LISTO PARA ESCALAR TUS VÍDEOS?</h2>
+                        <p class="contact-desc" data-i18n="contact_desc">Cuéntame sobre tu proyecto y necesidades. Rellena este formulario rápido de calificación y me pondré en contacto contigo en menos de 24 horas para darte una propuesta.</p>
+                        
+                        <div class="contact-direct-info">
+                            <div class="info-item">
+                                <span class="info-icon"><i class="fa-regular fa-envelope"></i></span>
+                                <div>
+                                    <p class="info-label" data-i18n="contact_email_label">Envíame un email</p>
+                                    <a href="mailto:arthur.the.videoeditor@gmail.com" class="info-link">arthur.the.videoeditor@gmail.com</a>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-icon"><i class="fa-brands fa-whatsapp"></i></span>
+                                <div>
+                                    <p class="info-label" data-i18n="contact_whatsapp_label">Hablemos por Whatsapp</p>
+                                    <a href="https://wa.me/593984558923" target="_blank" class="info-link">0984558923</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Form (Single View - Qualified) -->
+                    <div class="contact-form-container">
+                        <form class="qualify-form" id="qualify-form" name="qualify-form" data-netlify="true" netlify-honeypot="bot-field">
+                            <input type="hidden" name="form-name" value="qualify-form">
+                            <p style="display:none;"><label>Don't fill this out if human: <input name="bot-field"></label></p>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="form-name" data-i18n="form_name_label">Nombre Completo *</label>
+                                    <input type="text" id="form-name" name="name" placeholder="Ej. Juan Pérez" data-i18n-placeholder="form_name_placeholder" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-email" data-i18n="form_email_label">Email de Contacto *</label>
+                                    <input type="email" id="form-email" name="email" placeholder="Ej. juan@tuempresa.com" data-i18n-placeholder="form_email_placeholder" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="form-brand" data-i18n="form_brand_label">Canal / Marca / Sitio Web</label>
+                                    <input type="text" id="form-brand" name="brand" placeholder="Ej. youtube.com/c/canal o tumarca.com" data-i18n-placeholder="form_brand_placeholder">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="form-service" data-i18n="form_service_label">¿Qué tipo de servicio necesitas? *</label>
+                                    <select id="form-service" name="service" required>
+                                        <option value="" disabled selected data-i18n="form_service_default">Selecciona una opción</option>
+                                        <option value="verticals" data-i18n="form_service_verticals">Formato Corto Vertical (Reels / TikToks / Shorts)</option>
+                                        <option value="ugc-ads" data-i18n="form_service_ugc">Anuncios de Pauta (UGC / Facebook & Insta Ads)</option>
+                                        <option value="motion-graphics" data-i18n="form_service_motion">Edición con Motion Graphics</option>
+                                        <option value="youtube" data-i18n="form_service_youtube">Videos de YouTube (Largo / Horizontal)</option>
+                                        <option value="full" data-i18n="form_service_full">Servicio Completo (Multiplataforma / Híbrido)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-budget" data-i18n="form_budget_label">Presupuesto Estimado Mensual *</label>
+                                    <select id="form-budget" name="budget" required>
+                                        <option value="" disabled selected data-i18n="form_budget_default">Selecciona rango de inversión</option>
+                                        <option value="low" data-i18n="form_budget_low">Menos de $1,000 USD</option>
+                                        <option value="medium" data-i18n="form_budget_medium">$1,000 - $2,500 USD</option>
+                                        <option value="high" data-i18n="form_budget_high">Más de $2,500 USD</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="form-message" data-i18n="form_message_label">Detalles del Proyecto / Mensaje *</label>
+                                <textarea id="form-message" name="message" rows="5" placeholder="Cuéntame un poco más sobre el ritmo que buscas, volumen de videos al mes y referencias..." data-i18n-placeholder="form_message_placeholder" required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn" id="submit-btn">
+                                <span data-i18n="form_submit_btn">Enviar Propuesta & Iniciar</span>
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                            
+                            <div class="form-status" id="form-status"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Video Modal Lightbox -->
+    <div class="video-modal" id="video-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
+            <button class="modal-close" id="modal-close" aria-label="Cerrar reproductor">&times;</button>
+            <div class="modal-video-wrapper">
+                <!-- Reproductor de Video Directo (HTML5) -->
+                <video id="modal-video-player" controls playsinline style="display: none;">
+                    <source src="assets/previews/YOUTUBE_Follicle Friday_6_1_previews.mp4" type="video/mp4">
+                    Tu navegador no soporta la reproducción de video.
+                </video>
+                <!-- Contenedor para YouTube Embed -->
+                <div id="modal-youtube-wrapper" style="display: none; width: 100%; height: 100%;">
+                    <iframe id="modal-youtube-player" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" style="width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+            </div>
+            <div class="modal-info-bar">
+                <h3 id="modal-title">Título del Video</h3>
+                <span id="modal-category" class="modal-cat-badge">Categoría</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <p data-i18n="footer_copyright">&copy; 2026 ARTURO. Todos los derechos reservados.</p>
+            </div>
+            <div class="footer-socials">
+                <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                <a href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="app.js"></script>
+</body>
+</html>

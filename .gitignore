@@ -1,0 +1,13 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Backups
+*.bak
+
+# Temporary and local reference directories
+scratch/
+Referencías sitio web/
+.DS_Store
+Thumbs.db
