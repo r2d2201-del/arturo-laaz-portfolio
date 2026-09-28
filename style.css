@@ -1584,3 +1584,12 @@ section {
         transform: none; /* Remove rotation on mobile to prevent clipping and overflow */
     }
 }
+
+/* Managed catalog and draft preview */
+.youtube-thumbnail { width: 100%; height: 100%; object-fit: cover; }
+.video-container-card { position: relative; }
+.youtube-hover-player { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; }
+.square-ratio .card-media { aspect-ratio: 1; }
+.portfolio-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+.draft-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10000; background: #c0f775; color: #14210c; padding: 13px 20px; text-align: center; font: 13px Arial, sans-serif; }
+.portfolio-empty { grid-column: 1 / -1; padding: 50px 0; color: var(--text-muted); }

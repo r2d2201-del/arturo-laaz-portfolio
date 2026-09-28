@@ -1,4 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
+import { loadPortfolio, attachYouTubePreviews } from './catalog-view.mjs';
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadPortfolio();
 
     /* ==========================================
        0. Language Dictionary & Translations (ES / EN)
@@ -375,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
     portfolioCards.forEach(card => {
         const video = card.querySelector('.card-video-preview');
         
-        if (video) {
+        if (video && video.tagName === 'VIDEO') {
             // Mouse Enter: Play preview
             card.addEventListener('mouseenter', () => {
                 video.currentTime = 0;
@@ -406,6 +409,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCategory = document.getElementById('modal-category');
 
     portfolioCards.forEach(card => {
+        card.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); card.click(); }
+        });
         card.addEventListener('click', () => {
             const videoPreview = card.querySelector('.card-video-preview source');
             const youtubeId = card.getAttribute('data-youtube-id');
@@ -674,6 +680,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function setMetricText(target, value) {
+        const icon = target.querySelector('i')?.cloneNode(true);
+        target.replaceChildren();
+        if (icon) target.append(icon);
+        target.append(document.createTextNode(' ' + value));
+    }
+
     function translatePortfolioCards(lang) {
         portfolioCards.forEach(card => {
             const titleEl = card.querySelector('.card-title');
@@ -690,15 +703,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     const [enTitle, enMetric] = VIDEO_TRANSLATIONS[originalTitle];
                     if (titleEl) titleEl.textContent = enTitle;
                     if (metricEl) {
-                        const iconHtml = metricEl.querySelector('i') ? metricEl.querySelector('i').outerHTML : '<i class="fa-solid fa-eye"></i>';
-                        metricEl.innerHTML = `${iconHtml} ${enMetric}`;
+                        setMetricText(metricEl, enMetric);
                     }
                 } else {
                     // Fallback to original
                     if (titleEl) titleEl.textContent = originalTitle;
                     if (metricEl) {
-                        const iconHtml = metricEl.querySelector('i') ? metricEl.querySelector('i').outerHTML : '';
-                        metricEl.innerHTML = `${iconHtml} ${originalMetric}`;
+                        setMetricText(metricEl, originalMetric);
                     }
                 }
 
@@ -716,11 +727,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Restore Spanish originals
                 if (titleEl) titleEl.textContent = originalTitle;
                 if (metricEl) {
-                    const iconHtml = metricEl.querySelector('i') ? metricEl.querySelector('i').outerHTML : '';
-                    metricEl.innerHTML = `${iconHtml} ${originalMetric}`;
+                    setMetricText(metricEl, originalMetric);
                 }
                 if (categoryEl) categoryEl.textContent = originalCategory;
             }
+            if (lang === 'en') {
+                if (card.dataset.titleEn && titleEl) titleEl.textContent = card.dataset.titleEn;
+                if (card.dataset.metricEn && metricEl) setMetricText(metricEl, card.dataset.metricEn);
+                if (card.dataset.categoryEn && categoryEl) categoryEl.textContent = card.dataset.categoryEn;
+            }
+            card.setAttribute('aria-label', (lang === 'en' ? 'Watch ' : 'Ver ') + (titleEl?.textContent || ''));
         });
     }
 
@@ -767,9 +783,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const iconHtml = badgeEl.querySelector('i') ? badgeEl.querySelector('i').outerHTML : '';
             if (lang === 'en') {
                 const trans = HERO_OVERLAY_TRANSLATIONS[orig] || orig;
-                badgeEl.innerHTML = `${iconHtml} ${trans}`;
+                setMetricText(badgeEl, trans);
             } else {
-                badgeEl.innerHTML = `${iconHtml} ${orig}`;
+                setMetricText(badgeEl, orig);
             }
         }
         
@@ -832,6 +848,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update toggle text
         updateMenuToggleText();
 
+        document.querySelectorAll('[data-category-es]').forEach(button => {
+            button.textContent = lang === 'en' ? button.dataset.categoryEn : button.dataset.categoryEs;
+        });
         // Translate portfolio cards
         translatePortfolioCards(lang);
 
@@ -866,5 +885,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Run initialization
     initializePortfolioCardData();
     setLanguage(defaultLang);
+    attachYouTubePreviews();
 
 });

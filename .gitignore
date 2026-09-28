@@ -11,3 +11,10 @@ scratch/
 Referencías sitio web/
 .DS_Store
 Thumbs.db
+node_modules/
+dist/
+.netlify/
+.env
+.env.*
+!.env.example
+coverage/

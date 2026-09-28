@@ -1,0 +1,471 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    {
+      "id": "vertical",
+      "name": "Verticales / Reels",
+      "nameEn": "Verticals / Reels"
+    },
+    {
+      "id": "ugc-ads",
+      "name": "UGC & Ads",
+      "nameEn": "UGC & Ads"
+    },
+    {
+      "id": "motion-graphics",
+      "name": "Motion Graphics",
+      "nameEn": "Motion Graphics"
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube / Horizontales",
+      "nameEn": "YouTube / Horizontal"
+    }
+  ],
+  "hero": {
+    "projectId": null,
+    "preview": "assets/previews/HERO__Alto Impacto__Animaciones Explicativas & Motion Graphics__Captura la atención en los primeros 3 segundos.mp4",
+    "title": "Animaciones Explicativas & Motion Graphics",
+    "description": "Captura la atención en los primeros 3 segundos",
+    "badge": "Alto Impacto"
+  },
+  "items": [
+    {
+      "id": "project-001",
+      "title": "Follicle friday DHT",
+      "titleEn": "",
+      "description": "Content Creator",
+      "descriptionEn": "",
+      "category": "youtube",
+      "visible": true,
+      "aspect": "landscape",
+      "source": {
+        "type": "youtube",
+        "youtubeId": "nZrfTONeO-o",
+        "url": "",
+        "preview": "assets/previews/01_YOUTUBE_nZrfTONeO-o_Follicle friday DHT_Content Creator_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-002",
+      "title": "1 vs 1 million dollar pokemon items",
+      "titleEn": "",
+      "description": "Cartoon type",
+      "descriptionEn": "",
+      "category": "youtube",
+      "visible": true,
+      "aspect": "landscape",
+      "source": {
+        "type": "youtube",
+        "youtubeId": "K5YOoQ1x-Og",
+        "url": "",
+        "preview": "assets/previews/02_YOUTUBE_K5YOoQ1x-Og_1 vs 1 million dollar pokemon items_Cartoon type_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-003",
+      "title": "Most disturbing predator",
+      "titleEn": "",
+      "description": "Faceless Channel",
+      "descriptionEn": "",
+      "category": "youtube",
+      "visible": true,
+      "aspect": "landscape",
+      "source": {
+        "type": "youtube",
+        "youtubeId": "ozBEJk8mE84",
+        "url": "",
+        "preview": "assets/previews/03_YOUTUBE_ozBEJk8mE84_most disturbing predator_Faceless Channel_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-004",
+      "title": "Animaciones Explicativas & Motion Graphics",
+      "titleEn": "",
+      "description": "Diseño Visual Dinámico",
+      "descriptionEn": "",
+      "category": "motion-graphics",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/MOTION__Animaciones Explicativas & Motion Graphics__Diseño Visual Dinámico.mp4",
+        "preview": "assets/previews/04_MOTION__Animaciones Explicativas & Motion Graphics__Diseño Visual Dinámico_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-005",
+      "title": "Anuncio meta ADS",
+      "titleEn": "",
+      "description": "Mejor rendimiento",
+      "descriptionEn": "",
+      "category": "ugc-ads",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/AD_Anuncio meta ADS_ Mejor rendimiento.mp4",
+        "preview": "assets/previews/AD_Anuncio meta ADS_ Mejor rendimiento_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-006",
+      "title": "Anuncio para meta",
+      "titleEn": "",
+      "description": "Alto CTR",
+      "descriptionEn": "",
+      "category": "ugc-ads",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/AD_Anuncio para meta_Alto CTR.mp4",
+        "preview": "assets/previews/AD_Anuncio para meta_Alto CTR_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-007",
+      "title": "Productos o servicios",
+      "titleEn": "",
+      "description": "Marca empresarial",
+      "descriptionEn": "",
+      "category": "ugc-ads",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/AD_Productos o servicios_Marca empresarial.mp4",
+        "preview": "assets/previews/AD_Productos o servicios_Marca empresarial _previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-008",
+      "title": "Contenido para ADS",
+      "titleEn": "",
+      "description": "Alto rendimiento",
+      "descriptionEn": "",
+      "category": "vertical",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/REEL_Contenido para ADS_Alto rendimiento.mp4",
+        "preview": "assets/previews/REEL_Contenido para ADS_Alto rendimiento_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-009",
+      "title": "LAMBORGHINI VIDEO EVENT",
+      "titleEn": "",
+      "description": "Contenido de marca",
+      "descriptionEn": "",
+      "category": "vertical",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/REEL_LAMBORGHINI_VIDEO EVENT_Contenido de marca.mp4",
+        "preview": "assets/previews/REEL_LAMBORGHINI_VIDEO EVENT_Contenido de marca_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-010",
+      "title": "Seguro de vida",
+      "titleEn": "",
+      "description": "Marca Personal",
+      "descriptionEn": "",
+      "category": "vertical",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/REEL_Seguro de vida_Marca Personal.mp4",
+        "preview": "assets/previews/REEL_Seguro de vida_Marca Personal_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-011",
+      "title": "Video AD",
+      "titleEn": "",
+      "description": "Retención Alta",
+      "descriptionEn": "",
+      "category": "vertical",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/REEL__Video AD__Retención Alta.mp4",
+        "preview": "assets/previews/REEL__Video AD__Retención Alta__previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-012",
+      "title": "Short de video largo",
+      "titleEn": "",
+      "description": "Ver Video",
+      "descriptionEn": "",
+      "category": "vertical",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/Reel_Short de video largo.mp4",
+        "preview": "assets/previews/Reel_Short de video largo_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-013",
+      "title": "Short de video long form",
+      "titleEn": "",
+      "description": "Ver Video",
+      "descriptionEn": "",
+      "category": "vertical",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/Reel_Short de video long form.mp4",
+        "preview": "assets/previews/Reel_Short de video long form_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-014",
+      "title": "Youtube Short Extract",
+      "titleEn": "",
+      "description": "Ver Video",
+      "descriptionEn": "",
+      "category": "vertical",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/Reel_Youtube Short Extract.mp4",
+        "preview": "assets/previews/Reel_Youtube Short Extract_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-015",
+      "title": "Outdoor Garmin UGC Dacia",
+      "titleEn": "",
+      "description": "Ver Video",
+      "descriptionEn": "",
+      "category": "ugc-ads",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/UGC_ Outdoor Garmin UGC Dacia.mp4",
+        "preview": "assets/previews/UGC_ Outdoor Garmin UGC Dacia_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-016",
+      "title": "Matching your style UGC Allison",
+      "titleEn": "",
+      "description": "Alta retención",
+      "descriptionEn": "",
+      "category": "ugc-ads",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/UGC_Matching your style UGC Allison_Alta retención.mp4",
+        "preview": "assets/previews/UGC_Matching your style UGC Allison_Alta retención_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-017",
+      "title": "Same watch new vibe UGC Corbin",
+      "titleEn": "",
+      "description": "Alto rendimiento",
+      "descriptionEn": "",
+      "category": "ugc-ads",
+      "visible": true,
+      "aspect": "portrait",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/videos/UGC_Same watch-new vibe UGC Corbin_Alto rendimiento.mp4",
+        "preview": "assets/previews/UGC_Same watch-new vibe UGC Corbin_Alto rendimiento_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-018",
+      "title": "3 mistakes",
+      "titleEn": "",
+      "description": "Content Creator",
+      "descriptionEn": "",
+      "category": "youtube",
+      "visible": true,
+      "aspect": "landscape",
+      "source": {
+        "type": "video",
+        "youtubeId": "",
+        "url": "assets/previews/YOUTUBE_3 mistakes_Content Creator_previews.mp4",
+        "preview": "assets/previews/YOUTUBE_3 mistakes_Content Creator_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": "Pendiente: añadir el enlace real de YouTube. Antes apuntaba a un video de prueba."
+    },
+    {
+      "id": "project-019",
+      "title": "Cf Moto 675ss",
+      "titleEn": "",
+      "description": "Youtube Brand",
+      "descriptionEn": "",
+      "category": "youtube",
+      "visible": true,
+      "aspect": "landscape",
+      "source": {
+        "type": "youtube",
+        "youtubeId": "9xX3NSx8Y1I",
+        "url": "",
+        "preview": "assets/previews/YOUTUBE_9xX3NSx8Y1I_Cf Moto 675ss_Youtube Brand_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-020",
+      "title": "Contenido de nicho",
+      "titleEn": "",
+      "description": "Faceless Channel",
+      "descriptionEn": "",
+      "category": "youtube",
+      "visible": true,
+      "aspect": "landscape",
+      "source": {
+        "type": "youtube",
+        "youtubeId": "INJWilDjGm0",
+        "url": "",
+        "preview": "assets/previews/YOUTUBE_INJWilDjGm0_Contenido de nicho_Faceless Channel_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-021",
+      "title": "When Scoring A Goal Got A Player Executed",
+      "titleEn": "",
+      "description": "Faceless Cahnnel",
+      "descriptionEn": "",
+      "category": "youtube",
+      "visible": true,
+      "aspect": "landscape",
+      "source": {
+        "type": "youtube",
+        "youtubeId": "N2RC40ZEYTg",
+        "url": "",
+        "preview": "assets/previews/YOUTUBE_N2RC40ZEYTg_When Scoring A Goal Got A Player Executed_Faceless Cahnnel_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-022",
+      "title": "Follicle Friday",
+      "titleEn": "",
+      "description": "Content Creator",
+      "descriptionEn": "",
+      "category": "youtube",
+      "visible": true,
+      "aspect": "landscape",
+      "source": {
+        "type": "youtube",
+        "youtubeId": "PIq5rBiZjJk",
+        "url": "",
+        "preview": "assets/previews/YOUTUBE_PIq5rBiZjJk_Follicle Friday_Content Creator_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    },
+    {
+      "id": "project-023",
+      "title": "Pyrilutamide",
+      "titleEn": "",
+      "description": "Contect Creator",
+      "descriptionEn": "",
+      "category": "youtube",
+      "visible": true,
+      "aspect": "landscape",
+      "source": {
+        "type": "youtube",
+        "youtubeId": "a-7tnHy99eI",
+        "url": "",
+        "preview": "assets/previews/YOUTUBE_a-7tnHy99eI_Pyrilutamide_Contect Creator_previews.mp4",
+        "poster": "",
+        "assetId": ""
+      },
+      "note": ""
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Arturo Studio · Portafolio</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+  <script type="module" src="/admin/admin.js"></script>
+</head>
+<body>
+  <section id="login-screen" class="login-screen">
+    <div class="login-brand">A<span>↗</span></div>
+    <form id="login-form" class="login-card">
+      <p class="eyebrow">ARTURO STUDIO / ACCESO PRIVADO</p>
+      <h1>Tu trabajo.<br>Siempre al día.</h1>
+      <p class="muted">Un lugar para organizar, preparar y publicar tu portafolio.</p>
+      <label for="password">Contraseña</label>
+      <input id="password" type="password" name="password" autocomplete="current-password" required minlength="12">
+      <button class="primary" type="submit">Entrar al estudio <span>↗</span></button>
+      <p id="login-message" role="status" class="muted">Comprobando acceso…</p>
+      <a href="/">Volver al portafolio</a>
+    </form>
+  </section>
+
+  <div id="studio" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="/admin/">ARTURO<span>↗</span><small>STUDIO</small></a>
+      <div class="workspace-label">TU ESPACIO</div>
+      <button class="nav-item active" id="nav-library">▦ <span>Biblioteca</span><span id="nav-count">23</span></button>
+      <button class="nav-item" id="history-btn">↶ <span>Versiones anteriores</span></button>
+      <a class="nav-item" href="/" target="_blank" rel="noopener">↗ <span>Ver sitio publicado</span></a>
+      <div class="sidebar-bottom"><span class="avatar">AL</span><div>Arturo Laaz<small>Administrador</small></div><button id="logout" class="icon-button" aria-label="Cerrar sesión">↪</button></div>
+    </aside>
+
+    <main>
+      <header class="topbar"><span>ESTUDIO <span class="slash">/</span> PORTAFOLIO</span><span class="status-dot" id="connection-label">Espacio privado</span></header>
+      <section class="page-heading">
+        <div><p class="eyebrow">HECHO POR TI. LISTO PARA VERSE.</p><h1>Tu biblioteca<span>.</span></h1><p class="muted">Dale a cada proyecto el lugar que merece.</p></div>
+        <button class="primary" id="add-btn">＋ Añadir proyecto</button>
+      </section>
+
+      <section class="publish-bar" aria-label="Estado de publicación">
+        <div><span class="status-orb"></span><div><strong id="save-status">Cargando biblioteca…</strong><small id="publish-status">Los cambios se guardan como borrador.</small></div></div>
+        <div class="publish-actions"><button id="save-btn" class="secondary">Guardar borrador</button><button id="preview-btn" class="secondary">Vista previa ↗</button><button id="publish-btn" class="primary">Publicar cambios</button></div>
+      </section>
+
+      <div id="service-notice" class="notice" hidden></div>
+      <section class="library-tools">
+        <div id="category-filters" class="tabs" aria-label="Filtrar categoría"></div>
+        <label class="search"><span>⌕</span><input id="search" type="search" placeholder="Buscar un proyecto" aria-label="Buscar un proyecto"></label>
+      </section>
+      <div class="library-meta"><p id="results-count"></p><p>⠿ Arrastra para ordenar · Usa las flechas si lo prefieres</p></div>
+      <section id="project-grid" class="project-grid" aria-label="Proyectos del portafolio"></section>
+      <section id="empty-state" class="empty-state" hidden><span>↗</span><h2>Espacio para tu próximo trabajo.</h2><p>Prueba otra búsqueda o añade un proyecto.</p></section>
+      <footer class="studio-footer"><span>ARTURO STUDIO</span><button id="history-mobile" class="text-button">Versiones anteriores</button><button id="export-btn" class="text-button">Exportar catálogo ↓</button></footer>
+    </main>
+  </div>
+
+  <dialog id="editor" class="editor-dialog">
+    <form id="editor-form">
+      <div class="dialog-heading"><div><p class="eyebrow">BIBLIOTECA / PROYECTO</p><h2 id="editor-title">Añadir proyecto</h2></div><button type="button" class="icon-button" id="close-editor" aria-label="Cerrar editor">✕</button></div>
+      <div class="source-tabs"><button type="button" data-source="youtube" class="selected">Enlace de YouTube</button><button type="button" data-source="upload">Subir un video</button></div>
+      <section id="youtube-fields">
+        <label for="youtube-url">Enlace de YouTube o Shorts</label>
+        <div class="inline-field"><input type="url" id="youtube-url" placeholder="https://youtube.com/watch?v=…"><button type="button" class="secondary" id="import-youtube">Obtener datos</button></div>
+        <p class="field-help">La miniatura se obtiene automáticamente. El video se reproduce desde YouTube.</p>
+      </section>
+      <section id="upload-fields" hidden>
+        <label for="video-file" id="drop-zone" class="drop-zone"><strong>↥ Arrastra tu video aquí</strong><span>o haz clic para elegir un archivo</span><small id="upload-limit">MP4, MOV, WebM y otros formatos de video</small><input id="video-file" type="file" accept="video/*,.mkv,.avi"></label>
+        <div class="field-row"><div><label for="preview-start">Inicio del clip de vista previa (segundos)</label><input id="preview-start" type="number" min="0" max="36000" step="0.1" value="0"><p class="field-help">Generaremos hasta 5 segundos desde este punto, una portada y el video para la web.</p></div></div>
+        <button type="button" class="secondary" id="upload-btn">Preparar video</button>
+        <div id="upload-progress" hidden><progress max="100" value="0"></progress><p role="status"></p><button type="button" id="retry-upload" class="text-button" hidden>Comprobar de nuevo</button></div>
+      </section>
+      <div id="source-preview" class="source-preview" hidden></div>
+      <p id="source-note" class="field-help"></p>
+      <div class="field-row"><div><label for="project-title">Título *</label><input id="project-title" required maxlength="140" placeholder="El nombre de tu proyecto"></div><div><label for="project-category">Categoría</label><select id="project-category" required></select></div></div>
+      <label for="project-description">Descripción breve o resultado</label><textarea id="project-description" rows="2" maxlength="300" placeholder="Qué hace especial a este trabajo"></textarea>
+      <div class="field-row"><div><label for="project-aspect">Formato de la tarjeta</label><select id="project-aspect"><option value="portrait">Vertical</option><option value="landscape">Horizontal</option><option value="square">Cuadrado</option></select></div><div class="check-stack"><label><input id="project-visible" type="checkbox" checked> Mostrar en el portafolio</label><label><input id="project-featured" type="checkbox"> Usar como video de portada</label></div></div>
+      <details><summary>Versión en inglés (opcional)</summary><label for="project-title-en">Título en inglés</label><input id="project-title-en" maxlength="140"><label for="project-description-en">Descripción en inglés</label><textarea id="project-description-en" rows="2" maxlength="300"></textarea></details>
+      <p id="editor-message" role="status"></p>
+      <div class="dialog-actions"><button type="button" class="text-button danger" id="remove-btn" hidden>Quitar proyecto</button><button type="button" class="secondary" id="cancel-editor">Cancelar</button><button type="submit" class="primary" id="save-project">Guardar proyecto</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-dialog" class="small-dialog"><h2 id="confirm-title"></h2><p id="confirm-message" class="muted"></p><div class="dialog-actions"><button id="confirm-cancel" class="secondary">Cancelar</button><button id="confirm-ok" class="primary">Confirmar</button></div></dialog>
+  <dialog id="history-dialog" class="small-dialog"><div class="dialog-heading"><h2>Versiones anteriores</h2><button id="close-history" class="icon-button" aria-label="Cerrar versiones">✕</button></div><p class="muted">Restaurar recupera una versión como borrador. Después podrás revisarla y publicarla.</p><div id="history-list"></div></dialog>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
