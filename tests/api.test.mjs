@@ -6,6 +6,7 @@ import { createApi } from '../server/api.mjs';
 import { hashPassword, createSession, checkSession } from '../server/auth.mjs';
 import { youtubeId, moveItem, validateCatalog } from '../lib/catalog.mjs';
 import { uploadTicket, inspectUpload } from '../server/cloudinary.mjs';
+import { englishField, changeEnglishSource, settleEmptyEnglish, editEnglish, applyEnglish, useAutomaticEnglish, englishMetadata, needsEnglish } from '../lib/english.mjs';
 
 const password = 'testing-a-long-private-password';
 const env = { ADMIN_PASSWORD_HASH: hashPassword(password), SESSION_SECRET: 'secret-for-tests-only-123456789012345678901234567890' };
@@ -128,4 +129,79 @@ test('publication cannot use fabricated Cloudinary media or unfinished uploads',
   assert.equal((await s.call('draft', 'PUT', { revision: 0, catalog: copy })).status, 409);
   copy.items[0].source.assetId = '';
   assert.equal((await s.call('draft', 'PUT', { revision: 0, catalog: copy })).status, 400);
+});
+
+const aiEnv = { OPENAI_API_KEY: 'test-private-ai-key', OPENAI_BASE_URL: 'https://ai-gateway.test/v1' };
+function completion(translations) { return Response.json({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ translations }) } }] }); }
+test('translation requires authentication and origin, validates inputs and caches successful output', async () => {
+  let requests = 0;
+  const s = setup({ env: aiEnv, fetcher: async (url, options) => {
+    requests++; assert.equal(url, 'https://ai-gateway.test/v1/chat/completions');
+    assert.equal(options.headers.Authorization, 'Bearer test-private-ai-key');
+    const payload = JSON.parse(options.body); assert.equal(payload.model, 'gpt-4.1-mini'); assert.equal(payload.store, false);
+    return completion([{ id: 'title', text: 'Brand launch' }]);
+  } });
+  const texts = [{ id: 'title', kind: 'title', text: 'Lanzamiento de marca' }];
+  assert.equal((await s.call('translate', 'POST', { texts })).status, 401);
+  await s.login();
+  assert.equal((await s.call('translate', 'POST', { texts }, { headers: { Origin: 'https://evil.test' } })).status, 403);
+  assert.equal((await s.call('translate', 'POST', { texts: [{ id: 'x', kind: 'name', text: 'x'.repeat(81) }] })).status, 400);
+  assert.equal((await s.call('translate', 'POST', { texts: [...texts, ...texts] })).status, 400);
+  const result = await s.call('translate', 'POST', { texts });
+  assert.equal(result.status, 200); assert.equal(result.data.translations[0].text, 'Brand launch');
+  assert.ok(!JSON.stringify(result.data).includes(aiEnv.OPENAI_API_KEY));
+  assert.deepEqual((await s.call('translate', 'POST', { texts })).data, result.data);
+  assert.equal(requests, 1);
+  assert.deepEqual((await s.call('translate', 'POST', { texts: [{ id: 'empty', kind: 'description', text: '' }] })).data.translations, [{ id: 'empty', text: '' }]);
+});
+test('provider failures and malformed translations never become cached successful translations', async () => {
+  for (const fetcher of [async () => new Response(null, { status: 429 }), async () => completion([{ id: 'wrong', text: 'Not the requested field' }]), async () => completion([{ id: 'x', text: 'x'.repeat(81) }])]) {
+    const s = setup({ env: aiEnv, fetcher }); await s.login();
+    assert.ok((await s.call('translate', 'POST', { texts: [{ id: 'x', kind: 'name', text: 'Cine' }] })).status >= 500);
+    assert.ok([...s.store.values.keys()].every(x => !x.startsWith('translations/')));
+  }
+  const s = setup(); await s.login();
+  assert.equal((await s.call('translate', 'POST', { texts: [{ id: 'x', kind: 'name', text: 'Cine' }] })).status, 503);
+});
+test('automatic English ignores stale responses, preserves corrections and can resume automatic updates', () => {
+  const field = englishField('Video de marca');
+  assert.equal(needsEnglish(field), true);
+  changeEnglishSource(field, 'Video de producto');
+  assert.equal(applyEnglish(field, 'Video de marca', 'Brand video'), false);
+  assert.equal(field.value, '');
+  applyEnglish(field, 'Video de producto', 'Product video');
+  editEnglish(field, 'Product showcase');
+  changeEnglishSource(field, 'Anuncio de producto');
+  applyEnglish(field, 'Anuncio de producto', 'Product ad');
+  assert.equal(field.value, 'Product showcase');
+  const reopened = englishField(field.base, field.value, englishMetadata(field));
+  assert.equal(reopened.custom, true); assert.equal(needsEnglish(reopened), false);
+  useAutomaticEnglish(reopened); assert.equal(reopened.value, 'Product ad');
+  changeEnglishSource(reopened, ''); assert.equal(reopened.value, 'Product ad');
+  changeEnglishSource(reopened, 'Anuncio nuevo'); assert.equal(reopened.value, 'Product ad');
+  changeEnglishSource(reopened, ''); settleEmptyEnglish(reopened); assert.equal(reopened.value, ''); assert.equal(reopened.custom, false);
+  assert.equal(englishField('Original', 'Existing manual translation').custom, true);
+});
+test('category names and new categories persist as a draft, keep project assignments and publish in both languages', async () => {
+  const s = setup(); await s.login();
+  const draft = (await s.call('draft')).data.catalog;
+  const assignment = draft.items[0].category;
+  const category = draft.categories.find(x => x.id === assignment);
+  category.name = 'Películas de marca'; category.nameEn = 'Brand films';
+  category.english = { name: { source: category.name, automatic: 'Brand films', custom: false } };
+  draft.categories.push({ id: 'eventos', name: 'Eventos', nameEn: 'Events' });
+  draft.items[1].category = 'eventos';
+  draft.items[0].titleEn = 'My correction';
+  draft.items[0].english = { title: { source: draft.items[0].title, automatic: 'Automatic title', custom: true } };
+  assert.equal((await s.call('draft', 'PUT', { revision: 0, catalog: draft })).status, 200);
+  assert.equal((await s.call('catalog')).data.categories.length, 4);
+  const saved = (await s.call('draft')).data.catalog;
+  assert.equal(saved.items[0].category, assignment); assert.equal(saved.items[0].english.title.custom, true);
+  assert.equal(saved.categories.find(x => x.id === assignment).name, 'Películas de marca');
+  assert.equal((await s.call('publish', 'POST', { revision: 1 })).status, 200);
+  const published = (await s.call('catalog')).data;
+  assert.equal(published.categories.length, 5); assert.equal(published.categories.at(-1).nameEn, 'Events');
+  assert.ok(published.categories.every(x => !('english' in x))); assert.ok(published.items.every(x => !('english' in x)));
+  const invalid = structuredClone(saved); invalid.categories.at(-1).id = 'all';
+  assert.equal((await s.call('draft', 'PUT', { revision: 2, catalog: invalid })).status, 400);
 });

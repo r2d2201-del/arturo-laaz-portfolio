@@ -3,6 +3,7 @@ import seed from '../data/catalog.json' with { type: 'json' };
 import { validateCatalog, publicCatalog, youtubeId, thumbnail } from '../lib/catalog.mjs';
 import { verifyPassword, createSession, checkSession, sessionToken, sessionCookie, sameOrigin } from './auth.mjs';
 import { cloudConfigured, uploadTicket, inspectUpload } from './cloudinary.mjs';
+import { translateTexts, translationConfigured } from './translate.mjs';
 
 const localMedia = new Set([seed.hero.preview, ...seed.items.flatMap(x => [x.source.url, x.source.preview, x.source.poster])].filter(Boolean));
 const json = (value, status = 200, headers = {}) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...headers } });
@@ -67,7 +68,7 @@ export function createApi({ store, env = process.env, fetcher = fetch }) {
       if (path === '/api/status' && method === 'GET') {
         let authenticated = false;
         try { await authorize(req); authenticated = true; } catch (e) { if (e.status !== 401) throw e; }
-        return json({ configured: configured(), authenticated, uploadsConfigured: authenticated && cloudConfigured(env), maxUploadMB: Number(env.MAX_UPLOAD_MB) || 100 });
+        return json({ configured: configured(), authenticated, uploadsConfigured: authenticated && cloudConfigured(env), translationsConfigured: authenticated && translationConfigured(env), maxUploadMB: Number(env.MAX_UPLOAD_MB) || 100 });
       }
       if (path === '/api/login' && method === 'POST') {
         if (!configured()) reject(503, 'El acceso privado aún no está configurado.');
@@ -84,6 +85,10 @@ export function createApi({ store, env = process.env, fetcher = fetch }) {
       }
 
       await authorize(req);
+      if (path === '/api/translate' && method === 'POST') {
+        const { texts } = await body(req);
+        return json(await translateTexts(texts, { store, env, fetcher }));
+      }
       if (path === '/api/logout' && method === 'POST') {
         await store.remove(`sessions/${digest(sessionToken(req))}`);
         return json({ ok: true }, 200, { 'Set-Cookie': sessionCookie('', secure, true) });

@@ -140,6 +140,17 @@ input[type="checkbox"] { flex-shrink: 0; }
 .help-steps p + p { margin-top: 12px; }
 .help-steps strong, .help-footnote strong { font-weight: 500; color: #fff; }
 .help-footnote { border-top: 1px solid var(--line); padding-top: 20px; }
+.english-panel { border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.english-panel summary { color: var(--accent); font-weight: 600; font-size: 12px; }
+.translation-feedback { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; }
+.translation-feedback p { color: var(--muted); font-size: 10px; line-height: 1.6; }
+.translation-feedback p.translation-error { color: #ffbfa3; }
+.translation-feedback .text-button { padding: 2px 0; color: var(--accent); font-size: 10px; }
+.category-editor { border-top: 1px solid var(--line); padding: 20px 0 24px; }
+.category-project-count { color: var(--accent); font-size: 10px; margin: 0; }
+#categories-inline { padding: 0; color: var(--accent); font-size: 10px; white-space: nowrap; }
+.library-meta { flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+#categories-message { color: #ffbfa3; }
 
 @media (min-width: 1500px) { .project-media { height: 210px; } }
 @media (max-width: 1180px) {

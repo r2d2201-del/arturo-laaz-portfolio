@@ -9,6 +9,17 @@ Portafolio público y panel privado en `/admin/`. Conserva los 23 proyectos orig
 3. Guarda el proyecto. Arrastrar, ocultar y ordenar generan cambios locales: pulsa **Guardar borrador** para guardarlos en la nube.
 4. **Vista previa** abre el borrador autenticado. **Publicar cambios** cambia lo que ven los visitantes.
 5. **Versiones anteriores** recupera una publicación como borrador; revisa y publica para restaurarla. **Exportar catálogo** descarga una copia JSON.
+6. **Categorías** o **Editar categorías** permite crear categorías y renombrar las actuales. Guardar mantiene los proyectos asociados y actualiza el borrador; después pulsa **Publicar cambios**.
+
+### Inglés automático
+
+Los títulos, las descripciones y los nombres de categorías se traducen automáticamente al escribir y antes de guardar. El bloque **Inglés automático · Editable** muestra el resultado. Escribir una corrección conserva esa versión incluso cuando cambia el original; **Usar traducción automática** vuelve a la sugerencia actualizada. Una respuesta tardía no reemplaza un texto más reciente. Vaciar la descripción original también vacía su traducción. Las traducciones existentes se respetan como versiones personalizadas.
+
+El servidor usa `gpt-4.1-mini` mediante [Netlify AI Gateway](https://docs.netlify.com/build/ai-gateway/overview/), con las variables `OPENAI_API_KEY` y `OPENAI_BASE_URL` que Netlify proporciona a las funciones en planes con créditos. No requiere exponer claves en el navegador ni contratar otro servicio. Consume créditos del plan de Netlify. Se agrupan solicitudes, se cachean textos por contenido y se limita la generación a 100 solicitudes nuevas por hora para todo el sitio. Solo se envían los textos a traducir, nunca el catálogo completo, medios ni notas privadas.
+
+Si el servicio no está disponible o se agotan los créditos, los textos permanecen en el editor y se ofrece **Reintentar**. El guardado espera una traducción actualizada, salvo que todos los campos pendientes tengan una versión escrita manualmente. No se guarda una respuesta de error como traducción. Las generaciones por sí solas no publican ni modifican proyectos: se guardan con el proyecto o las categorías. Los proyectos anteriores se traducen al abrirlos para editar.
+
+En `npm run dev`, las variables de AI Gateway no se inyectan. Para traducciones reales locales usa el entorno de Netlify o configura una base URL y clave propias en `.env`. Las pruebas automatizadas usan respuestas controladas y no consumen créditos.
 
 Quitar un proyecto no destruye sus medios. Los originales y versiones conservadas en Cloudinary siguen ocupando almacenamiento hasta que se gestionen allí. Los borradores con cambios sin guardar se recuperan en el mismo navegador; los borradores guardados se comparten entre computadoras.
 
@@ -66,7 +77,7 @@ El catálogo público se consulta al abrir la página. Ante un fallo del servici
 
 Al publicar por primera vez, verificar `/api/catalog` (público), `/api/draft` (401 sin sesión), login, guardar/recargar borrador, publicar y restaurar. Probar carga de un archivo pequeño con Cloudinary conectado y confirmar que las tres versiones se reproducen. Probar el formulario de contacto solo con autorización para enviar una consulta real.
 
-La fuente de verdad tras la primera edición es **Netlify Blobs**. Para nuevas categorías o secciones, modificar el catálogo vigente mediante la API autenticada y ajustar navegación/traducciones si corresponde. Cambiar solo el catálogo semilla no actualiza una biblioteca ya inicializada. `update_portfolio.py` es el generador anterior y no debe usarse para administrar el panel nuevo.
+La fuente de verdad tras la primera edición es **Netlify Blobs**. Las categorías se administran en el panel. Para nuevas secciones, modificar el catálogo vigente mediante la API autenticada y ajustar navegación/traducciones si corresponde. Cambiar solo el catálogo semilla no actualiza una biblioteca ya inicializada. `update_portfolio.py` es el generador anterior y no debe usarse para administrar el panel nuevo.
 
 ## Detalles de la migración
 

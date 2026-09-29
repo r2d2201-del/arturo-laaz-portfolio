@@ -37,6 +37,7 @@
       <a class="brand" href="/admin/">ARTURO<span>.</span><small>STUDIO</small></a>
       <div class="workspace-label">TU ESPACIO</div>
       <button class="nav-item active" id="nav-library">▦ <span>Biblioteca</span><span id="nav-count">23</span></button>
+      <button class="nav-item" id="categories-btn">☷ <span>Categorías</span></button>
       <button class="nav-item" id="history-btn">↶ <span>Versiones anteriores</span></button>
       <button class="nav-item" id="help-btn">? <span>Cómo usar el panel</span></button>
       <a class="nav-item" href="/" target="_blank" rel="noopener">↗ <span>Ver sitio publicado</span></a>
@@ -60,7 +61,7 @@
         <div id="category-filters" class="tabs" aria-label="Filtrar categoría"></div>
         <label class="search"><span>⌕</span><input id="search" type="search" placeholder="Buscar un proyecto" aria-label="Buscar un proyecto"></label>
       </section>
-      <div class="library-meta"><p id="results-count"></p><p>⠿ Arrastra para ordenar · Usa las flechas si lo prefieres</p></div>
+      <div class="library-meta"><p id="results-count"></p><button id="categories-inline" class="text-button">Editar categorías ↗</button><p>⠿ Arrastra para ordenar · Usa las flechas si lo prefieres</p></div>
       <section id="project-grid" class="project-grid" aria-label="Proyectos del portafolio"></section>
       <section id="empty-state" class="empty-state" hidden><span>↗</span><h2>Espacio para tu próximo trabajo.</h2><p>Prueba otra búsqueda o añade un proyecto.</p></section>
       <footer class="studio-footer"><span>ARTURO STUDIO</span><button id="help-mobile" class="text-button">Cómo usar el panel</button><button id="history-mobile" class="text-button">Versiones anteriores</button><button id="export-btn" class="text-button">Exportar catálogo ↓</button></footer>
@@ -88,9 +89,27 @@
       <div class="field-row"><div><label for="project-title">Título *</label><input id="project-title" required maxlength="140" placeholder="El nombre de tu proyecto"></div><div><label for="project-category">Categoría</label><select id="project-category" required></select></div></div>
       <label for="project-description">Descripción breve o resultado</label><textarea id="project-description" rows="2" maxlength="300" placeholder="Qué hace especial a este trabajo"></textarea>
       <div class="field-row"><div><label for="project-aspect">Formato de la tarjeta</label><select id="project-aspect"><option value="portrait">Vertical</option><option value="landscape">Horizontal</option><option value="square">Cuadrado</option></select></div><div class="check-stack"><label><input id="project-visible" type="checkbox" checked> Mostrar en el portafolio</label><label><input id="project-featured" type="checkbox"> Usar como video de portada</label></div></div>
-      <details><summary>Versión en inglés (opcional)</summary><label for="project-title-en">Título en inglés</label><input id="project-title-en" maxlength="140"><label for="project-description-en">Descripción en inglés</label><textarea id="project-description-en" rows="2" maxlength="300"></textarea></details>
+      <details id="english-details" open class="english-panel"><summary>Inglés automático · Editable</summary>
+        <p class="field-help">Se genera al escribir y al guardar. Si lo corriges, conservamos tu versión; puedes volver a la sugerencia automática cuando quieras.</p>
+        <label for="project-title-en">Título en inglés</label><input id="project-title-en" maxlength="140">
+        <div class="translation-feedback"><p id="title-translation-status" role="status"></p><button type="button" id="title-translation-reset" class="text-button" hidden>Usar traducción automática</button></div>
+        <label for="project-description-en">Descripción en inglés</label><textarea id="project-description-en" rows="2" maxlength="300"></textarea>
+        <div class="translation-feedback"><p id="description-translation-status" role="status"></p><button type="button" id="description-translation-reset" class="text-button" hidden>Usar traducción automática</button></div>
+      </details>
       <p id="editor-message" role="status"></p>
       <div class="dialog-actions"><button type="button" class="text-button danger" id="remove-btn" hidden>Quitar proyecto</button><button type="button" class="secondary" id="cancel-editor">Cancelar</button><button type="submit" class="primary" id="save-project">Guardar proyecto</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="categories-dialog" class="editor-dialog" aria-labelledby="categories-title">
+    <form id="categories-form">
+      <div class="dialog-heading"><div><p class="eyebrow">ORGANIZA TU TRABAJO</p><h2 id="categories-title">Tus categorías<span>.</span></h2></div><button type="button" id="close-categories" class="icon-button" aria-label="Cerrar categorías">✕</button></div>
+      <p class="muted field-help">Crea categorías y cambia sus nombres. Los proyectos conservarán su categoría. El nombre en inglés se genera automáticamente y puedes corregirlo.</p>
+      <div id="categories-list"></div>
+      <button type="button" id="add-category" class="secondary">＋ Nueva categoría</button>
+      <p id="categories-message" role="status" class="field-help"></p>
+      <div class="dialog-actions"><button type="button" id="cancel-categories" class="secondary">Cancelar</button><button type="submit" class="primary">Guardar categorías</button></div>
+      <p class="field-help">Se guardarán en el borrador. Pulsa Publicar cambios para mostrarlas en tu portafolio.</p>
     </form>
   </dialog>
 

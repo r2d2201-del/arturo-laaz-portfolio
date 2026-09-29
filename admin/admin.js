@@ -1,4 +1,5 @@
 import { moveItem, thumbnail, youtubeId } from '/lib/catalog.mjs';
+import { translationEditor } from './translation-editor.mjs';
 
 const $ = id => document.getElementById(id);
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
@@ -7,6 +8,28 @@ let filter = 'all', editing = null, source = null, sourceMode = 'youtube', selec
 let uploadRunning = false, pendingUpload = null, connection, draggedId, filePrepared = false;
 const editor = $('editor');
 let toastTimer;
+let projectEnglish, categoryEditors = [];
+let translationQueue = [], translationTimer, translationPipeline = Promise.resolve();
+function requestTranslations(texts) {
+  return new Promise((resolve, reject) => {
+    translationQueue.push({ texts, resolve, reject });
+    clearTimeout(translationTimer);
+    translationTimer = setTimeout(() => {
+      const requests = translationQueue; translationQueue = [];
+      translationPipeline = translationPipeline.catch(() => {}).then(async () => {
+        while (requests.length) {
+          const batch = []; let count = 0;
+          while (requests.length && count + requests[0].texts.length <= 8) { const request = requests.shift(); count += request.texts.length; batch.push(request); }
+          try {
+            const texts = batch.flatMap((request, index) => request.texts.map(text => ({ ...text, id: `r${index}_${text.id}` })));
+            const response = await api('translate', { method: 'POST', data: { texts } });
+            batch.forEach((request, index) => request.resolve({ translations: request.texts.map(text => ({ id: text.id, text: response.translations.find(x => x.id === `r${index}_${text.id}`)?.text })) }));
+          } catch (error) { batch.forEach(request => request.reject(error)); }
+        }
+      });
+    }, 40);
+  });
+}
 function toast(message, error = false) {
   clearTimeout(toastTimer); $('toast').textContent = message; $('toast').className = error ? 'error' : ''; $('toast').hidden = false;
   toastTimer = setTimeout(() => { $('toast').hidden = true; }, error ? 10_000 : 5000);
@@ -22,10 +45,10 @@ async function api(path, { method = 'GET', data } = {}) {
 }
 async function task(fn) {
   if (busy) return;
-  busy = true; $('studio').inert = true; $('editor-form').inert = true;
+  busy = true; $('studio').inert = true; $('editor-form').inert = true; $('categories-form').inert = true;
   try { return await fn(); }
-  catch (e) { toast(e.message, true); if (editor.open) $('editor-message').textContent = e.message; }
-  finally { busy = false; $('studio').inert = false; $('editor-form').inert = false; }
+  catch (e) { toast(e.message, true); if (editor.open) $('editor-message').textContent = e.message; if ($('categories-dialog').open) $('categories-message').textContent = e.message; }
+  finally { busy = false; $('studio').inert = false; $('editor-form').inert = false; $('categories-form').inert = false; }
 }
 function confirmAction(title, message, label = 'Confirmar') {
   $('confirm-title').textContent = title; $('confirm-message').textContent = message; $('confirm-ok').textContent = label;
@@ -151,6 +174,7 @@ function showSource() {
   if (!source.preview) $('project-featured').checked = false;
 }
 function openEditor(id = null) {
+  projectEnglish?.dispose();
   editing = id; selectedFile = null; pendingUpload = null; filePrepared = false; $('editor-form').reset(); $('editor-message').textContent = '';
   $('drop-zone').querySelector('strong').textContent = '↥ Arrastra tu video aquí';
   const item = catalog.items.find(x => x.id === id);
@@ -165,12 +189,16 @@ function openEditor(id = null) {
   $('youtube-url').value = source?.youtubeId ? `https://www.youtube.com/watch?v=${source.youtubeId}` : '';
   $('source-note').textContent = item?.note || 'Puedes conservar la fuente actual o reemplazarla.';
   $('remove-btn').hidden = !item; $('upload-progress').hidden = true; $('retry-upload').hidden = true;
+  projectEnglish = translationEditor(['title', 'description'].map(key => ({
+    key, source: $(`project-${key}`), target: $(`project-${key}-en`), status: $(`${key}-translation-status`), reset: $(`${key}-translation-reset`),
+  })), item?.english, requestTranslations);
   setSourceMode(item?.source.type === 'video' ? 'upload' : 'youtube'); showSource(); editor.showModal();
 }
 function closeEditor() {
   if (uploadRunning) { toast('Espera a que termine la carga para cerrar el editor.', true); return; }
   editor.close();
 }
+editor.addEventListener('close', () => projectEnglish?.dispose());
 $('close-editor').onclick = closeEditor; $('cancel-editor').onclick = closeEditor;
 editor.addEventListener('cancel', event => { if (uploadRunning || busy) event.preventDefault(); });
 document.querySelectorAll('[data-source]').forEach(button => { button.onclick = () => { if (!uploadRunning) setSourceMode(button.dataset.source); }; });
@@ -178,7 +206,7 @@ $('import-youtube').onclick = () => task(async () => {
   const result = await api('youtube', { method: 'POST', data: { url: $('youtube-url').value } });
   source = { type: 'youtube', youtubeId: result.id, poster: result.poster, url: '', preview: '', assetId: '' };
   if (!$('project-title').value) $('project-title').value = result.title;
-  $('project-aspect').value = result.aspect; $('source-note').textContent = ''; $('editor-message').textContent = ''; showSource();
+  $('project-aspect').value = result.aspect; $('source-note').textContent = ''; $('editor-message').textContent = ''; showSource(); projectEnglish.schedule();
 });
 function chooseFile(file) {
   selectedFile = file;
@@ -186,6 +214,7 @@ function chooseFile(file) {
   if (!file) return;
   $('drop-zone').querySelector('strong').textContent = file.name;
   if (!$('project-title').value) $('project-title').value = file.name.replace(/\.[^.]+$/, '').slice(0, 140);
+  projectEnglish.schedule();
 }
 $('video-file').onchange = event => chooseFile(event.target.files[0]);
 $('drop-zone').addEventListener('dragover', event => { event.preventDefault(); $('drop-zone').classList.add('over'); });
@@ -258,10 +287,12 @@ $('editor-form').onsubmit = event => {
   if (sourceMode === 'youtube' && source.type !== 'youtube' || sourceMode === 'upload' && source.type === 'youtube') { $('editor-message').textContent = 'Prepara la nueva fuente o vuelve a la pestaña de la fuente actual.'; return; }
   if ($('project-featured').checked && (!$('project-visible').checked || !source.preview)) { $('editor-message').textContent = 'La portada necesita un proyecto visible con un clip preparado.'; return; }
   task(async () => {
+    $('editor-message').textContent = 'Preparando la versión en inglés…';
+    await projectEnglish.ensureForSave();
     const id = editing || crypto.randomUUID();
     const previous = catalog.items.find(x => x.id === id);
     const note = previous && JSON.stringify(previous.source) === JSON.stringify(source) ? previous.note : '';
-    const item = { id, title: $('project-title').value.trim(), titleEn: $('project-title-en').value.trim(), description: $('project-description').value.trim(), descriptionEn: $('project-description-en').value.trim(), category: $('project-category').value, aspect: $('project-aspect').value, visible: $('project-visible').checked, source, note };
+    const item = { id, title: $('project-title').value.trim(), titleEn: $('project-title-en').value.trim(), description: $('project-description').value.trim(), descriptionEn: $('project-description-en').value.trim(), english: projectEnglish.metadata(), category: $('project-category').value, aspect: $('project-aspect').value, visible: $('project-visible').checked, source, note };
     const index = catalog.items.findIndex(x => x.id === id);
     if (index >= 0) catalog.items[index] = item; else catalog.items.unshift(item);
     editing = id;
@@ -306,6 +337,47 @@ $('history-btn').onclick = () => task(async () => {
 });
 $('close-history').onclick = () => $('history-dialog').close();
 $('history-mobile').onclick = () => $('history-btn').click();
+function addCategoryRow(category) {
+  const row = el('section', 'category-editor');
+  const sourceId = `category-name-${category.id}`, targetId = `category-en-${category.id}`;
+  const nameLabel = el('label', '', 'Nombre de la categoría'); nameLabel.htmlFor = sourceId;
+  const name = el('input'); name.id = sourceId; name.required = true; name.maxLength = 80; name.value = category.name;
+  const englishLabel = el('label', '', 'Nombre en inglés'); englishLabel.htmlFor = targetId;
+  const nameEn = el('input'); nameEn.id = targetId; nameEn.maxLength = 80; nameEn.value = category.nameEn || '';
+  const status = el('p'); status.setAttribute('role', 'status');
+  const reset = el('button', 'text-button', 'Usar traducción automática'); reset.type = 'button';
+  const feedback = el('div', 'translation-feedback'); feedback.append(status, reset);
+  const count = catalog.items.filter(x => x.category === category.id).length;
+  row.append(el('p', 'category-project-count', `${count} ${count === 1 ? 'proyecto' : 'proyectos'}`), nameLabel, name, englishLabel, nameEn, feedback);
+  $('categories-list').append(row);
+  const translator = translationEditor([{ key: 'name', source: name, target: nameEn, status, reset }], category.english, requestTranslations);
+  categoryEditors.push({ category, name, nameEn, translator });
+  $('add-category').disabled = categoryEditors.length >= 30;
+  return name;
+}
+$('categories-btn').onclick = () => {
+  categoryEditors.forEach(x => x.translator.dispose()); categoryEditors = [];
+  $('categories-list').replaceChildren(); $('categories-message').textContent = '';
+  catalog.categories.forEach(addCategoryRow); $('categories-dialog').showModal();
+};
+$('categories-inline').onclick = () => $('categories-btn').click();
+$('add-category').onclick = () => {
+  if (categoryEditors.length >= 30) return;
+  addCategoryRow({ id: `category-${crypto.randomUUID()}`, name: '', nameEn: '' }).focus();
+};
+$('categories-dialog').addEventListener('close', () => categoryEditors.forEach(x => x.translator.dispose()));
+$('categories-dialog').addEventListener('cancel', event => { if (busy) event.preventDefault(); });
+$('close-categories').onclick = $('cancel-categories').onclick = () => $('categories-dialog').close();
+$('categories-form').onsubmit = event => {
+  event.preventDefault();
+  task(async () => {
+    $('categories-message').textContent = 'Preparando los nombres en inglés…';
+    if (categoryEditors.some(x => !x.name.value.trim())) throw new Error('Escribe un nombre para cada categoría.');
+    await Promise.all(categoryEditors.map(item => item.translator.ensureForSave()));
+    catalog.categories = categoryEditors.map(({ category, name, nameEn, translator }) => ({ id: category.id, name: name.value.trim(), nameEn: nameEn.value.trim(), english: translator.metadata() }));
+    markDirty(); render(); await saveDraft(); $('categories-dialog').close(); toast('Categorías guardadas en el borrador. Publica cuando estén listas.');
+  });
+};
 $('help-btn').onclick = () => $('help-dialog').showModal();
 $('help-mobile').onclick = () => $('help-dialog').showModal();
 $('close-help').onclick = () => $('help-dialog').close();
