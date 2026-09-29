@@ -236,3 +236,21 @@ test('YouTube metrics respect draft/public switches, hidden items and authentica
   await s.call('draft', 'PUT', { catalog: saved, revision: 2 }); await s.call('publish', 'POST', { revision: 3 });
   assert.deepEqual((await s.call('youtube-metrics')).data, { items: [] });
 });
+
+test('private metrics preview checks a saved video without changing switches or catalog', async () => {
+  let calls = 0;
+  const id = seed.items.find(item => item.source.type === 'youtube').source.youtubeId;
+  const s = setup({ env: { YOUTUBE_API_KEY: 'private-preview-key' }, fetcher: async () => { calls++; return Response.json({ items: [{ id, statistics: { viewCount: '12345', likeCount: '12', commentCount: '3' } }] }); } });
+  assert.equal((await s.call('youtube-metrics-preview', 'POST', { id })).status, 401);
+  await s.login();
+  const before = (await s.call('draft')).data;
+  assert.equal((await s.call('youtube-metrics-preview', 'POST', { id }, { headers: { Origin: 'https://attacker.test' } })).status, 403);
+  assert.equal((await s.call('youtube-metrics-preview', 'POST', { id: 'invalid' })).status, 400);
+  assert.equal((await s.call('youtube-metrics-preview', 'POST', { id: 'aaaaaaaaaaa' })).status, 404);
+  const preview = await s.call('youtube-metrics-preview', 'POST', { id });
+  assert.equal(preview.status, 200); assert.equal(preview.data.viewCount, '12345'); assert.equal(calls, 1);
+  assert.deepEqual((await s.call('draft')).data, before);
+  assert.deepEqual((await s.call('youtube-metrics')).data, { items: [] });
+  const missing = setup(); await missing.login();
+  assert.equal((await missing.call('youtube-metrics-preview', 'POST', { id })).status, 503);
+});

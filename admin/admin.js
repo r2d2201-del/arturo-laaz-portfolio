@@ -1,5 +1,6 @@
 import { moveItem, thumbnail, youtubeId } from '/lib/catalog.mjs';
 import { translationEditor } from './translation-editor.mjs';
+import { metricsText } from '/lib/youtube-metrics-view.mjs';
 
 const $ = id => document.getElementById(id);
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
@@ -168,6 +169,8 @@ function setSourceMode(mode) {
 }
 function showSource() {
   const box = $('source-preview'); box.replaceChildren(); box.hidden = !source;
+  $('check-youtube-metrics').disabled = !connection?.youtubeMetricsConfigured || source?.type !== 'youtube';
+  $('youtube-metrics-result').hidden = true;
   $('project-featured').disabled = !source?.preview;
   if (!source) return;
   if (source.poster || source.youtubeId) { const image = el('img'); image.src = source.poster || thumbnail(source.youtubeId); image.alt = 'Portada del proyecto'; box.append(image); }
@@ -211,6 +214,17 @@ $('import-youtube').onclick = () => task(async () => {
   source = { type: 'youtube', youtubeId: result.id, poster: result.poster, url: '', preview: '', assetId: '' };
   if (!$('project-title').value) $('project-title').value = result.title;
   $('project-aspect').value = result.aspect; $('source-note').textContent = ''; $('editor-message').textContent = ''; showSource(); projectEnglish.schedule();
+});
+$('check-youtube-metrics').onclick = () => task(async () => {
+  if (source?.type !== 'youtube') return;
+  const result = $('youtube-metrics-result'); result.hidden = false; result.textContent = 'Consultando YouTube…';
+  try {
+    const data = await api('youtube-metrics-preview', { method: 'POST', data: { id: source.youtubeId } });
+    const text = metricsText(data);
+    result.textContent = data.status === 'available'
+      ? `${text.values.map(value => `${value.label}: ${value.full}`).join(' · ')}. ${text.status}.`
+      : 'YouTube no devuelve métricas para este video. Comprueba que siga disponible.';
+  } catch (error) { result.textContent = error.message; }
 });
 function chooseFile(file) {
   selectedFile = file;

@@ -92,6 +92,19 @@ export function createApi({ store, env = process.env, fetcher = fetch }) {
       }
 
       await authorize(req);
+      if (path === '/api/youtube-metrics-preview' && method === 'POST') {
+        const { id: input } = await body(req);
+        const id = youtubeId(input);
+        if (!id) reject(400, 'Selecciona un video válido de YouTube.');
+        if (!youtubeMetricsConfigured(env)) reject(503, 'Falta configurar la clave de YouTube en Netlify y volver a desplegar.');
+        const { data } = await state();
+        const item = [...data.draft.items, ...data.published.items].find(item => item.source.type === 'youtube' && item.source.youtubeId === id);
+        if (!item) reject(404, 'Guarda el proyecto primero para comprobar sus métricas.');
+        const result = await youtubeMetrics({ items: [{ ...item, visible: true, showYoutubeMetrics: true }] }, { store, env, fetcher });
+        const metrics = result.items[0];
+        if (metrics?.status === 'error') reject(503, 'YouTube no respondió con las métricas. Comprueba la clave, la API habilitada y su cuota; después intenta nuevamente.');
+        return json(metrics);
+      }
       if (path === '/api/translate' && method === 'POST') {
         const { texts } = await body(req);
         return json(await translateTexts(texts, { store, env, fetcher }));
