@@ -138,6 +138,7 @@ function setSourceMode(mode) {
   document.querySelectorAll('[data-source]').forEach(b => b.classList.toggle('selected', b.dataset.source === mode));
   $('youtube-fields').hidden = mode !== 'youtube'; $('upload-fields').hidden = mode !== 'upload';
   $('upload-btn').disabled = !connection?.uploadsConfigured;
+  $('upload-notice').hidden = Boolean(connection?.uploadsConfigured);
 }
 function showSource() {
   const box = $('source-preview'); box.replaceChildren(); box.hidden = !source;
@@ -305,6 +306,9 @@ $('history-btn').onclick = () => task(async () => {
 });
 $('close-history').onclick = () => $('history-dialog').close();
 $('history-mobile').onclick = () => $('history-btn').click();
+$('help-btn').onclick = () => $('help-dialog').showModal();
+$('help-mobile').onclick = () => $('help-dialog').showModal();
+$('close-help').onclick = () => $('help-dialog').close();
 function download(data, name) { const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); const a = el('a'); a.href = url; a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
 $('export-btn').onclick = () => download(catalog, `portafolio-${new Date().toISOString().slice(0, 10)}.json`);
 $('logout').onclick = async () => {

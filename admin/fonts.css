@@ -1,1 +1,21 @@
-/* System fonts keep the private editor fast and independent of external font services. */
+/* Self-hosted Google Fonts. SIL Open Font Licenses are in assets/fonts. */
+@font-face {
+  font-family: 'Anton'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('/assets/fonts/anton-400.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('/assets/fonts/plus-jakarta-sans-400.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 500; font-display: swap;
+  src: url('/assets/fonts/plus-jakarta-sans-500.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 600; font-display: swap;
+  src: url('/assets/fonts/plus-jakarta-sans-600.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 700; font-display: swap;
+  src: url('/assets/fonts/plus-jakarta-sans-700.ttf') format('truetype');
+}
