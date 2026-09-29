@@ -4,6 +4,7 @@ import { validateCatalog, publicCatalog, youtubeId, thumbnail } from '../lib/cat
 import { verifyPassword, createSession, checkSession, sessionToken, sessionCookie, sameOrigin } from './auth.mjs';
 import { cloudConfigured, uploadTicket, inspectUpload } from './cloudinary.mjs';
 import { translateTexts, translationConfigured } from './translate.mjs';
+import { youtubeMetrics, youtubeMetricsConfigured } from './youtube-metrics.mjs';
 
 const localMedia = new Set([seed.hero.preview, ...seed.items.flatMap(x => [x.source.url, x.source.preview, x.source.poster])].filter(Boolean));
 const json = (value, status = 200, headers = {}) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...headers } });
@@ -65,10 +66,16 @@ export function createApi({ store, env = process.env, fetcher = fetch }) {
       if (method !== 'GET' && !sameOrigin(req)) reject(403, 'Origen de la solicitud no permitido.');
 
       if (path === '/api/catalog' && method === 'GET') return json(publicCatalog((await state()).data.published));
+      if (path === '/api/youtube-metrics' && method === 'GET') {
+        const preview = new URL(req.url).searchParams.get('preview') === 'draft';
+        if (preview) await authorize(req);
+        const { data } = await state();
+        return json(await youtubeMetrics(preview ? data.draft : data.published, { store, env, fetcher }));
+      }
       if (path === '/api/status' && method === 'GET') {
         let authenticated = false;
         try { await authorize(req); authenticated = true; } catch (e) { if (e.status !== 401) throw e; }
-        return json({ configured: configured(), authenticated, uploadsConfigured: authenticated && cloudConfigured(env), translationsConfigured: authenticated && translationConfigured(env), maxUploadMB: Number(env.MAX_UPLOAD_MB) || 100 });
+        return json({ configured: configured(), authenticated, uploadsConfigured: authenticated && cloudConfigured(env), translationsConfigured: authenticated && translationConfigured(env), youtubeMetricsConfigured: authenticated && youtubeMetricsConfigured(env), maxUploadMB: Number(env.MAX_UPLOAD_MB) || 100 });
       }
       if (path === '/api/login' && method === 'POST') {
         if (!configured()) reject(503, 'El acceso privado aún no está configurado.');

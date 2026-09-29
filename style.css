@@ -1593,3 +1593,11 @@ section {
 .portfolio-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
 .draft-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10000; background: #c0f775; color: #14210c; padding: 13px 20px; text-align: center; font: 13px Arial, sans-serif; }
 .portfolio-empty { grid-column: 1 / -1; padding: 50px 0; color: var(--text-muted); }
+
+/* Optional real YouTube statistics, separate from the project description. */
+.youtube-metrics { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.14); }
+.youtube-metrics-values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.youtube-metric { min-width: 0; }
+.youtube-metric strong { display: block; font-size: 17px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.5; }
+.youtube-metric span { display: block; color: #aaa; font-size: 9px; line-height: 1.5; overflow-wrap: anywhere; }
+.youtube-metrics .youtube-metrics-status { font-size: 9px; color: #999; line-height: 1.5; margin: 12px 0 0; }

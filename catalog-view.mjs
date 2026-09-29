@@ -1,4 +1,33 @@
 import { thumbnail } from './lib/catalog.mjs';
+import { metricsText } from './lib/youtube-metrics-view.mjs';
+
+const metricsById = new Map();
+export function renderYouTubeMetrics() {
+  const lang = document.documentElement.lang || 'es';
+  document.querySelectorAll('[data-metrics-id]').forEach(box => {
+    const text = metricsText(metricsById.get(box.dataset.metricsId), lang);
+    const values = element('div', 'youtube-metrics-values');
+    for (const value of text.values) {
+      const field = element('div', 'youtube-metric');
+      field.title = `${value.label}: ${value.full}`;
+      field.setAttribute('aria-label', field.title);
+      field.append(element('strong', '', value.value), element('span', '', value.label));
+      values.append(field);
+    }
+    box.replaceChildren(values, element('p', 'youtube-metrics-status', text.status));
+  });
+}
+async function loadYouTubeMetrics(isPreview) {
+  if (!document.querySelector('[data-metrics-id]')) return;
+  try {
+    const response = await fetch(`/api/youtube-metrics${isPreview ? '?preview=draft' : ''}`, { cache: 'no-store', signal: AbortSignal.timeout(12_000) });
+    if (!response.ok) throw new Error('Metrics unavailable');
+    const result = await response.json();
+    for (const item of result.items) metricsById.set(item.id, item);
+  } catch { /* Metrics must never prevent viewing the portfolio. */ }
+  for (const [id, value] of metricsById) if (value.status === 'loading') metricsById.set(id, { status: 'error' });
+  renderYouTubeMetrics();
+}
 
 const element = (tag, className, text) => {
   const el = document.createElement(tag);
@@ -15,6 +44,7 @@ export async function loadPortfolio() {
     const result = await response.json();
     const catalog = isPreview ? result.catalog : result;
     renderCatalog(catalog);
+    void loadYouTubeMetrics(isPreview);
     if (isPreview) {
       const banner = element('div', 'draft-banner', 'VISTA PREVIA · Borrador guardado. Los visitantes todavía no ven estos cambios.');
       document.body.prepend(banner);
@@ -87,9 +117,16 @@ export function renderCatalog(catalog) {
     const metric = element('div', 'card-metric');
     metric.append(element('i', 'fa-solid fa-eye'), document.createTextNode(` ${item.description}`));
     info.append(element('span', 'card-category', cat?.name || ''), element('h3', 'card-title', item.title), metric);
+    if (item.source.type === 'youtube' && item.showYoutubeMetrics === true) {
+      const metrics = element('div', 'youtube-metrics');
+      metrics.dataset.metricsId = item.source.youtubeId;
+      metricsById.set(item.source.youtubeId, { status: 'loading' });
+      info.append(metrics);
+    }
     card.append(media, info); grid.append(card);
   }
   if (!grid.children.length) grid.append(element('p', 'portfolio-empty', 'Próximamente, nuevos proyectos.'));
+  renderYouTubeMetrics();
   const featured = catalog.items.find(x => x.id === catalog.hero.projectId && x.visible);
   const hero = document.getElementById('hero-preview-video');
   if (hero) {
@@ -100,6 +137,8 @@ export function renderCatalog(catalog) {
   if (info) {
     info.querySelector('h3').textContent = featured?.title || catalog.hero.title;
     info.querySelector('p').textContent = featured?.description || catalog.hero.description;
+    info.querySelector('h3').dataset.textEn = featured?.titleEn || '';
+    info.querySelector('p').dataset.textEn = featured?.descriptionEn || '';
     const badge = info.querySelector('.badge');
     badge.replaceChildren(element('i', 'fa-solid fa-bolt'), document.createTextNode(` ${catalog.hero.badge}`));
   }

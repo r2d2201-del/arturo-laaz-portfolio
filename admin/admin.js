@@ -160,6 +160,9 @@ function setSourceMode(mode) {
   sourceMode = mode;
   document.querySelectorAll('[data-source]').forEach(b => b.classList.toggle('selected', b.dataset.source === mode));
   $('youtube-fields').hidden = mode !== 'youtube'; $('upload-fields').hidden = mode !== 'upload';
+  $('youtube-metrics-help').textContent = connection?.youtubeMetricsConfigured
+    ? 'Visualizaciones, likes y número de comentarios en la tarjeta. Se actualizan aproximadamente cada hora al visitar el sitio; los datos no disponibles se indican con —.'
+    : 'Falta conectar YouTube Data API. Puedes guardar esta opción; las cifras aparecerán cuando se configure el servicio.';
   $('upload-btn').disabled = !connection?.uploadsConfigured;
   $('upload-notice').hidden = Boolean(connection?.uploadsConfigured);
 }
@@ -186,6 +189,7 @@ function openEditor(id = null) {
   $('project-description').value = item?.description || ''; $('project-description-en').value = item?.descriptionEn || '';
   $('project-aspect').value = item?.aspect || 'portrait'; $('project-visible').checked = item?.visible ?? true;
   $('project-featured').checked = Boolean(id && catalog.hero.projectId === id);
+  $('project-youtube-metrics').checked = item?.showYoutubeMetrics === true;
   $('youtube-url').value = source?.youtubeId ? `https://www.youtube.com/watch?v=${source.youtubeId}` : '';
   $('source-note').textContent = item?.note || 'Puedes conservar la fuente actual o reemplazarla.';
   $('remove-btn').hidden = !item; $('upload-progress').hidden = true; $('retry-upload').hidden = true;
@@ -292,7 +296,7 @@ $('editor-form').onsubmit = event => {
     const id = editing || crypto.randomUUID();
     const previous = catalog.items.find(x => x.id === id);
     const note = previous && JSON.stringify(previous.source) === JSON.stringify(source) ? previous.note : '';
-    const item = { id, title: $('project-title').value.trim(), titleEn: $('project-title-en').value.trim(), description: $('project-description').value.trim(), descriptionEn: $('project-description-en').value.trim(), english: projectEnglish.metadata(), category: $('project-category').value, aspect: $('project-aspect').value, visible: $('project-visible').checked, source, note };
+    const item = { id, title: $('project-title').value.trim(), titleEn: $('project-title-en').value.trim(), description: $('project-description').value.trim(), descriptionEn: $('project-description-en').value.trim(), english: projectEnglish.metadata(), category: $('project-category').value, aspect: $('project-aspect').value, visible: $('project-visible').checked, showYoutubeMetrics: source.type === 'youtube' && $('project-youtube-metrics').checked, source, note };
     const index = catalog.items.findIndex(x => x.id === id);
     if (index >= 0) catalog.items[index] = item; else catalog.items.unshift(item);
     editing = id;

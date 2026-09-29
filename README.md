@@ -23,6 +23,16 @@ En `npm run dev`, las variables de AI Gateway no se inyectan. Para traducciones 
 
 Quitar un proyecto no destruye sus medios. Los originales y versiones conservadas en Cloudinary siguen ocupando almacenamiento hasta que se gestionen allí. Los borradores con cambios sin guardar se recuperan en el mismo navegador; los borradores guardados se comparten entre computadoras.
 
+### Métricas de YouTube
+
+En **Editar proyecto → Enlace de YouTube**, activa **Mostrar métricas de YouTube**. La opción se guarda por proyecto y se publica con el resto del borrador. Funciona con videos y Shorts; no se ofrece para archivos subidos. Muestra visualizaciones, likes y el número de comentarios, no el contenido de los comentarios. La descripción editorial se conserva por separado.
+
+Configuración única: en Google Cloud selecciona el proyecto **Arturo Laaz Portfolio** (`arturo-laaz-portfolio`), habilita **YouTube Data API v3** y crea una clave restringida únicamente a esa API. El servidor de Netlify consulta los datos, por lo que no uses restricciones por referente de sitio web. Guarda la clave en Netlify como `YOUTUBE_API_KEY`, disponible para Functions, y vuelve a desplegar. No añadas la clave al código, al repositorio ni a variables públicas del navegador.
+
+El servidor consulta [videos.list](https://developers.google.com/youtube/v3/docs/videos/list) en lotes de hasta 50 IDs. Comparte caché durante una hora y solo renueva al visitar el sitio. Una reserva de 30 segundos evita consultas concurrentes y los fallos esperan cinco minutos antes de reintentar. Si YouTube falla, puede mostrar los últimos valores reales durante un máximo de 24 horas, indicando su fecha. Los contadores ausentes aparecen como **— / No disponible**; un cero real se muestra como **0**. Sin clave o sin acceso a un video, no se inventan cifras. La carga de las métricas es independiente de la biblioteca para no retrasarla.
+
+`/api/youtube-metrics` consulta únicamente videos visibles y activados del catálogo publicado. La variante `?preview=draft` exige la sesión privada y usa el borrador. No acepta IDs arbitrarios para gastar la cuota pública del proyecto. Las etiquetas y los números se adaptan a ES/EN.
+
 ## Desarrollo local
 
 Node.js 22 o superior:
@@ -53,6 +63,7 @@ El comando crea un archivo **local, ignorado por Git, con permisos 0600**, bajo 
 | --- | --- |
 | `ADMIN_PASSWORD_HASH` | Hash scrypt de la contraseña; nunca la contraseña en claro |
 | `SESSION_SECRET` | Secreto aleatorio de firma de sesiones |
+| `YOUTUBE_API_KEY` | Opcional: clave de YouTube Data API v3, solo en el servidor, para métricas |
 | `CLOUDINARY_CLOUD_NAME` | Nombre del entorno de Cloudinary |
 | `CLOUDINARY_API_KEY` | Clave de API de ese entorno |
 | `CLOUDINARY_API_SECRET` | Secreto, disponible únicamente en las funciones |

@@ -205,3 +205,34 @@ test('category names and new categories persist as a draft, keep project assignm
   const invalid = structuredClone(saved); invalid.categories.at(-1).id = 'all';
   assert.equal((await s.call('draft', 'PUT', { revision: 2, catalog: invalid })).status, 400);
 });
+
+test('YouTube metrics respect draft/public switches, hidden items and authentication; keys stay private', async () => {
+  const requested = [];
+  const s = setup({ env: { YOUTUBE_API_KEY: 'private-youtube-key' }, fetcher: async (url, options) => {
+    requested.push(url); assert.equal(options.headers['X-Goog-Api-Key'], 'private-youtube-key');
+    const ids = new URL(url).searchParams.get('id').split(',');
+    return Response.json({ items: ids.map(id => ({ id, statistics: { viewCount: '1500', likeCount: '0' } })) });
+  } });
+  assert.deepEqual((await s.call('youtube-metrics?ids=aaaaaaaaaaa')).data, { items: [] });
+  assert.equal((await s.call('youtube-metrics?preview=draft')).status, 401);
+  await s.login();
+  const draft = (await s.call('draft')).data.catalog;
+  const videos = draft.items.filter(item => item.source.type === 'youtube');
+  videos[0].showYoutubeMetrics = true;
+  const hidden = videos.find(item => item.source.youtubeId !== videos[0].source.youtubeId);
+  hidden.showYoutubeMetrics = true; hidden.visible = false;
+  const local = draft.items.find(item => item.source.type === 'video'); local.showYoutubeMetrics = true;
+  assert.equal((await s.call('draft', 'PUT', { catalog: draft, revision: 0 })).status, 200);
+  assert.equal((await s.call('draft')).data.catalog.items.find(x => x.id === local.id).showYoutubeMetrics, false);
+  assert.deepEqual((await s.call('youtube-metrics')).data, { items: [] });
+  const preview = await s.call('youtube-metrics?preview=draft');
+  assert.equal(preview.status, 200); assert.equal(preview.data.items.length, 1);
+  assert.equal(preview.data.items[0].viewCount, '1500'); assert.equal(preview.data.items[0].likeCount, '0'); assert.equal(preview.data.items[0].commentCount, null);
+  assert.equal((await s.call('publish', 'POST', { revision: 1 })).status, 200);
+  assert.deepEqual((await s.call('youtube-metrics')).data, preview.data); assert.equal(requested.length, 1);
+  assert.ok(!JSON.stringify(preview.data).includes('private-youtube-key')); assert.ok(!requested[0].includes('private-youtube-key'));
+  assert.ok(!new URL(requested[0]).searchParams.get('id').includes(hidden.source.youtubeId));
+  const saved = (await s.call('draft')).data.catalog; saved.items.find(x => x.id === videos[0].id).showYoutubeMetrics = false;
+  await s.call('draft', 'PUT', { catalog: saved, revision: 2 }); await s.call('publish', 'POST', { revision: 3 });
+  assert.deepEqual((await s.call('youtube-metrics')).data, { items: [] });
+});

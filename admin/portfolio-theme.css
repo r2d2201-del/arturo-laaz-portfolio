@@ -219,3 +219,12 @@ input[type="checkbox"] { flex-shrink: 0; }
   .login-intro h1 { font-size: 46px; }
   .topbar { font-size: 7px; }
 }
+
+.youtube-metrics-option { margin: 18px 0; padding: 15px 16px; border: 1px solid var(--line); border-radius: 10px; background: #ffffff03; }
+.youtube-metrics-option .switch-label { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 0; cursor: pointer; line-height: 1.5; color: var(--ink); }
+.youtube-metrics-option .field-help { margin: 10px 0 0; }
+input#project-youtube-metrics { appearance: none; flex: 0 0 42px; width: 42px; height: 24px; border-radius: 30px; padding: 0; margin: 0; background: #363636; border: 1px solid #555; cursor: pointer; position: relative; }
+input#project-youtube-metrics::before { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #eee; transition: transform .15s; }
+input#project-youtube-metrics:checked { background: var(--accent); border-color: var(--accent); }
+input#project-youtube-metrics:checked::before { background: #151515; transform: translateX(18px); }
+input#project-youtube-metrics:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }

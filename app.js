@@ -1,4 +1,4 @@
-import { loadPortfolio, attachYouTubePreviews } from './catalog-view.mjs';
+import { loadPortfolio, attachYouTubePreviews, renderYouTubeMetrics } from './catalog-view.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
     await loadPortfolio();
@@ -795,7 +795,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             const orig = titleEl.getAttribute('data-original-text');
             if (lang === 'en') {
-                titleEl.textContent = HERO_OVERLAY_TRANSLATIONS[orig] || (VIDEO_TRANSLATIONS[orig] ? VIDEO_TRANSLATIONS[orig][0] : orig);
+                titleEl.textContent = titleEl.dataset.textEn || HERO_OVERLAY_TRANSLATIONS[orig] || (VIDEO_TRANSLATIONS[orig] ? VIDEO_TRANSLATIONS[orig][0] : orig);
             } else {
                 titleEl.textContent = orig;
             }
@@ -807,7 +807,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             const orig = descEl.getAttribute('data-original-text');
             if (lang === 'en') {
-                descEl.textContent = HERO_OVERLAY_TRANSLATIONS[orig] || (VIDEO_TRANSLATIONS[orig] ? VIDEO_TRANSLATIONS[orig][1] : orig);
+                descEl.textContent = descEl.dataset.textEn || HERO_OVERLAY_TRANSLATIONS[orig] || (VIDEO_TRANSLATIONS[orig] ? VIDEO_TRANSLATIONS[orig][1] : orig);
             } else {
                 descEl.textContent = orig;
             }
@@ -853,6 +853,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         // Translate portfolio cards
         translatePortfolioCards(lang);
+        renderYouTubeMetrics();
 
         // Translate hero info overlay
         translateHeroOverlay(lang);
