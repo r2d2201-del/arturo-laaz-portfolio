@@ -254,3 +254,34 @@ test('private metrics preview checks a saved video without changing switches or 
   const missing = setup(); await missing.login();
   assert.equal((await missing.call('youtube-metrics-preview', 'POST', { id })).status, 503);
 });
+
+test('private library batches draft metrics including hidden projects without publishing or changing the catalog', async () => {
+  const requested = [];
+  const s = setup({ env: { YOUTUBE_API_KEY: 'private-library-key' }, fetcher: async url => {
+    const ids = new URL(url).searchParams.get('id').split(','); requested.push(ids);
+    return Response.json({ items: ids.map(id => ({ id, statistics: { viewCount: '12345', likeCount: '0' } })) });
+  } });
+  assert.equal((await s.call('youtube-metrics-library')).status, 401);
+  await s.login();
+  const draft = (await s.call('draft')).data.catalog;
+  const [visible, hidden, disabled] = draft.items.filter(item => item.source.type === 'youtube');
+  visible.showYoutubeMetrics = true;
+  hidden.showYoutubeMetrics = true; hidden.visible = false;
+  disabled.showYoutubeMetrics = false;
+  assert.equal((await s.call('draft', 'PUT', { catalog: draft, revision: 0 })).status, 200);
+  const before = (await s.call('draft')).data;
+  const library = await s.call('youtube-metrics-library');
+  assert.equal(library.status, 200);
+  const expectedIds = [visible.source.youtubeId, hidden.source.youtubeId];
+  assert.deepEqual(library.data.items.map(item => item.id), expectedIds);
+  assert.equal(library.data.items[0].viewCount, '12345');
+  assert.equal(library.data.items[0].likeCount, '0');
+  assert.equal(library.data.items[0].commentCount, null);
+  assert.deepEqual(requested, [expectedIds]);
+  assert.deepEqual((await s.call('youtube-metrics-library')).data, library.data);
+  assert.equal(requested.length, 1);
+  assert.deepEqual((await s.call('youtube-metrics?preview=draft')).data.items.map(item => item.id), [visible.source.youtubeId]);
+  assert.deepEqual((await s.call('youtube-metrics')).data, { items: [] });
+  assert.deepEqual((await s.call('draft')).data, before);
+  assert.ok(!JSON.stringify(library.data).includes('private-library-key'));
+});

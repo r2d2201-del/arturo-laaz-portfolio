@@ -92,6 +92,12 @@ export function createApi({ store, env = process.env, fetcher = fetch }) {
       }
 
       await authorize(req);
+      if (path === '/api/youtube-metrics-library' && method === 'GET') {
+        const { data } = await state();
+        // The private library can preview opted-in projects before making them visible.
+        const items = data.draft.items.map(item => ({ ...item, visible: true }));
+        return json(await youtubeMetrics({ items }, { store, env, fetcher }));
+      }
       if (path === '/api/youtube-metrics-preview' && method === 'POST') {
         const { id: input } = await body(req);
         const id = youtubeId(input);

@@ -10,6 +10,8 @@ let uploadRunning = false, pendingUpload = null, connection, draggedId, filePrep
 const editor = $('editor');
 let toastTimer;
 let projectEnglish, categoryEditors = [];
+const libraryMetrics = new Map();
+let libraryMetricsRequest = 0;
 let translationQueue = [], translationTimer, translationPipeline = Promise.resolve();
 function requestTranslations(texts) {
   return new Promise((resolve, reject) => {
@@ -75,12 +77,51 @@ async function saveDraft() {
   if (!dirty) return;
   const result = await api('draft', { method: 'PUT', data: { revision, catalog } });
   revision = result.revision; unpublished = result.hasUnpublishedChanges; dirty = false;
-  localStorage.removeItem('portfolio-unsaved'); status();
+  localStorage.removeItem('portfolio-unsaved'); status(); void loadLibraryMetrics();
 }
 async function refresh() {
   const result = await api('draft');
   catalog = result.catalog; revision = result.revision; publishedAt = result.publishedAt; history = result.history;
-  unpublished = result.hasUnpublishedChanges; dirty = false; render(); status();
+  unpublished = result.hasUnpublishedChanges; dirty = false; render(); status(); void loadLibraryMetrics();
+}
+function renderLibraryMetrics() {
+  document.querySelectorAll('[data-library-metrics-id]').forEach(box => {
+    const metrics = libraryMetrics.get(box.dataset.libraryMetricsId);
+    const text = metricsText(metrics);
+    const values = el('div', 'studio-metrics-values');
+    for (const value of text.values) {
+      const field = el('div', 'studio-metric');
+      field.title = `${value.label}: ${value.full}`;
+      field.setAttribute('aria-label', field.title);
+      field.append(el('strong', '', value.value), el('span', '', value.label));
+      values.append(field);
+    }
+    const message = !metrics ? 'Guarda el borrador para cargar las métricas.'
+      : metrics.status === 'unconfigured' ? 'Falta conectar YouTube para ver las métricas.' : text.status;
+    box.replaceChildren(values, el('p', 'studio-metrics-status', message));
+    if (metrics?.status === 'error') {
+      const retry = el('button', 'text-button', 'Reintentar métricas');
+      retry.onclick = () => void loadLibraryMetrics(); box.append(retry);
+    }
+  });
+}
+async function loadLibraryMetrics() {
+  const request = ++libraryMetricsRequest;
+  const ids = [...new Set(catalog.items.filter(item => item.source.type === 'youtube' && item.showYoutubeMetrics).map(item => item.source.youtubeId))];
+  libraryMetrics.clear();
+  for (const id of ids) libraryMetrics.set(id, { status: connection?.youtubeMetricsConfigured ? 'loading' : 'unconfigured' });
+  renderLibraryMetrics();
+  if (!ids.length || !connection?.youtubeMetricsConfigured) return;
+  try {
+    const result = await api('youtube-metrics-library');
+    if (request !== libraryMetricsRequest) return;
+    const byId = new Map(result.items.map(item => [item.id, item]));
+    for (const id of ids) libraryMetrics.set(id, byId.get(id) || { status: 'error' });
+  } catch {
+    if (request !== libraryMetricsRequest) return;
+    for (const id of ids) libraryMetrics.set(id, { status: 'error' });
+  }
+  renderLibraryMetrics();
 }
 async function enterStudio() {
   connection = await api('status');
@@ -119,6 +160,7 @@ function render() {
     const add = el('button', 'project-add'); add.append(el('span', 'plus', '+'), el('strong', '', 'Un nuevo proyecto'), el('small', '', 'Sube un video o pega un enlace'));
     add.onclick = () => openEditor(); grid.append(add);
   }
+  renderLibraryMetrics();
 }
 function projectCard(item) {
   const card = el('article', `project-card${item.visible ? '' : ' is-hidden'}`); card.dataset.id = item.id; card.dataset.aspect = item.aspect;
@@ -138,6 +180,10 @@ function projectCard(item) {
   media.append(flags, edit);
   const body = el('div', 'card-body');
   body.append(el('p', 'card-category', catalog.categories.find(x => x.id === item.category)?.name), el('h3', '', item.title), el('p', 'card-description', item.description));
+  if (item.source.type === 'youtube' && item.showYoutubeMetrics) {
+    const metrics = el('div', 'studio-metrics'); metrics.dataset.libraryMetricsId = item.source.youtubeId;
+    metrics.setAttribute('role', 'group'); metrics.setAttribute('aria-label', 'Métricas de YouTube'); body.append(metrics);
+  }
   const bottom = el('div', 'card-bottom');
   const order = el('div', 'card-order');
   const handle = el('button', 'drag-handle', '⠿'); handle.draggable = true; handle.setAttribute('aria-label', `Arrastrar ${item.title}`);
@@ -164,7 +210,7 @@ function setSourceMode(mode) {
   document.querySelectorAll('[data-source]').forEach(b => b.classList.toggle('selected', b.dataset.source === mode));
   $('youtube-fields').hidden = mode !== 'youtube'; $('upload-fields').hidden = mode !== 'upload';
   $('youtube-metrics-help').textContent = connection?.youtubeMetricsConfigured
-    ? 'Visualizaciones, likes y número de comentarios en la tarjeta. Se actualizan aproximadamente cada hora al visitar el sitio; los datos no disponibles se indican con —.'
+    ? 'Al guardar el proyecto verás las cifras en su tarjeta de Studio. Publícalo para mostrarlas en la web. Se actualizan aproximadamente cada hora; los datos no disponibles se indican con —.'
     : 'Falta conectar YouTube Data API. Puedes guardar esta opción; las cifras aparecerán cuando se configure el servicio.';
   $('upload-btn').disabled = !connection?.uploadsConfigured;
   $('upload-notice').hidden = Boolean(connection?.uploadsConfigured);

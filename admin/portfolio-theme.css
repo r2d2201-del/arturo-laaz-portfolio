@@ -106,6 +106,18 @@ main { margin-left: 208px; padding: 24px 38px 0; }
 .card-category { color: var(--accent); font-size: 8px; letter-spacing: 1px; margin-bottom: 11px; }
 .card-body h3 { font-size: 20px; font-weight: 400; line-height: 1.35; }
 .card-description { margin-top: 9px; font-size: 10px; min-height: 16px; }
+.studio-metrics { container-type: inline-size; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.studio-metrics-values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.studio-metric { min-width: 0; }
+.studio-metric strong { display: block; color: var(--accent); font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.5; }
+.studio-metric span { display: block; color: #aaa; font-size: 9px; line-height: 1.5; overflow-wrap: anywhere; }
+.studio-metrics-status { margin-top: 12px; font-size: 9px; color: #999; line-height: 1.5; }
+.studio-metrics .text-button { font-size: 10px; color: var(--accent); padding: 8px 0 0; }
+@container (max-width: 210px) {
+  .studio-metrics-values { grid-template-columns: 1fr; }
+  .studio-metric { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .studio-metric strong { order: 1; flex-shrink: 0; font-size: 14px; }
+}
 .card-bottom { border-color: var(--line); margin-top: 18px; }
 .card-order, .card-bottom button { color: var(--muted); }
 .card-bottom button { font-size: 11px; }
