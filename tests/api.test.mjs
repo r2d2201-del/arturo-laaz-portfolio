@@ -286,3 +286,42 @@ test('private library batches draft metrics including hidden projects without pu
   assert.deepEqual((await s.call('draft')).data, before);
   assert.ok(!JSON.stringify(library.data).includes('private-library-key'));
 });
+
+test('changing an uploaded clip creates a verified variant without altering the published asset or catalog', async () => {
+  const requests = [];
+  const record = uploadTicket(cloud, 0);
+  const fetcher = async (url, options) => {
+    requests.push({ url, options });
+    if (options.method === 'POST') return Response.json({ result: 'ok' });
+    if (options.method === 'HEAD') return new Response(null, { status: 200 });
+    return Response.json({ public_id: record.publicId, resource_type: 'video', version: 42, duration: 20, width: 1920, height: 1080, bytes: 1234 });
+  };
+  const s = setup({ env: cloud, fetcher });
+  assert.equal((await s.call(`uploads/${record.id}/preview`, 'POST', { start: 4 })).status, 401);
+  await s.login();
+  assert.equal((await s.call(`uploads/${record.id}/preview`, 'POST', { start: 4 })).status, 404);
+  await s.store.write(`uploads/${record.id}`, { ...record, size: 1234 });
+  assert.equal((await s.call(`uploads/${record.id}/preview`, 'POST', { start: 4 })).status, 409);
+  await s.call(`uploads/${record.id}`);
+  const old = await s.store.read(`uploads/${record.id}`);
+  const before = (await s.call('draft')).data;
+  for (const start of [-1, 20, '4', null, 19.99]) assert.equal((await s.call(`uploads/${record.id}/preview`, 'POST', { start })).status, 400);
+  assert.equal((await s.call(`uploads/${record.id}/preview`, 'POST', { start: 4 }, { headers: { Origin: 'https://attacker.test' } })).status, 403);
+  const same = await s.call(`uploads/${record.id}/preview`, 'POST', { start: 0 });
+  assert.equal(same.data.id, record.id);
+  const response = await s.call(`uploads/${record.id}/preview`, 'POST', { start: 4.24 });
+  assert.equal(response.status, 200); assert.notEqual(response.data.id, record.id);
+  const request = requests.find(x => x.options.method === 'POST');
+  assert.equal(request.url, 'https://api.cloudinary.com/v1_1/test-cloud/video/explicit');
+  assert.equal(request.options.body.get('public_id'), record.publicId);
+  assert.match(request.options.body.get('eager'), /so_4.2,du_5/);
+  assert.equal(request.options.body.get('eager_async'), 'true');
+  assert.equal(request.options.body.has('overwrite'), false);
+  const ready = await s.call(`uploads/${response.data.id}`);
+  assert.equal(ready.data.status, 'ready'); assert.equal(ready.data.source.assetId, response.data.id);
+  assert.equal(ready.data.source.url, old.data.result.source.url);
+  assert.match(ready.data.source.preview, /so_4.2,du_5/);
+  assert.match(ready.data.source.poster, /so_4.2,f_jpg/);
+  assert.deepEqual(await s.store.read(`uploads/${record.id}`), old);
+  assert.deepEqual((await s.call('draft')).data, before);
+});

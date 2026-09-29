@@ -1,4 +1,5 @@
 import { loadPortfolio, attachYouTubePreviews, renderYouTubeMetrics } from './catalog-view.mjs';
+import { masonryGrid } from './lib/masonry.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
     await loadPortfolio();
@@ -263,12 +264,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loadMoreBtn = document.getElementById('load-more-btn');
     const loadMoreContainer = document.querySelector('.portfolio-load-more');
     const portfolioSection = document.getElementById('portfolio');
+    const portfolioLayout = masonryGrid(document.getElementById('portfolio-grid'));
     
     const ITEMS_LIMIT = 6;
     let isExpanded = false;
     let currentFilter = 'all';
 
     function updatePortfolio(animate = true) {
+        portfolioLayout.setActive(currentFilter === 'all');
         let matchingCount = 0;
 
         portfolioCards.forEach(card => {

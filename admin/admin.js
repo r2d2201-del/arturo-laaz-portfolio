@@ -1,13 +1,23 @@
 import { moveItem, thumbnail, youtubeId } from '/lib/catalog.mjs';
 import { translationEditor } from './translation-editor.mjs';
 import { metricsText } from '/lib/youtube-metrics-view.mjs';
+import { videoPreview, sourceClipStart } from './video-preview.mjs';
+import { masonryGrid } from '/lib/masonry.mjs';
 
 const $ = id => document.getElementById(id);
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
 let catalog, revision = 0, publishedAt, history = [], dirty = false, unpublished = false, busy = false;
 let filter = 'all', editing = null, source = null, sourceMode = 'youtube', selectedFile = null;
 let uploadRunning = false, pendingUpload = null, connection, draggedId, filePrepared = false;
+let preparedStart = 0, previewChanged = false;
+const clipEditor = videoPreview($('video-preview-editor'), () => {
+  previewChanged = !selectedFile && source?.type === 'video' && clipEditor.start !== preparedStart;
+  if (selectedFile) filePrepared = false;
+  pendingUpload = null; $('retry-upload').hidden = true; $('upload-progress').hidden = true;
+  updateUploadControls();
+});
 const editor = $('editor');
+const libraryLayout = masonryGrid($('project-grid'));
 let toastTimer;
 let projectEnglish, categoryEditors = [];
 const libraryMetrics = new Map();
@@ -160,6 +170,7 @@ function render() {
     const add = el('button', 'project-add'); add.append(el('span', 'plus', '+'), el('strong', '', 'Un nuevo proyecto'), el('small', '', 'Sube un video o pega un enlace'));
     add.onclick = () => openEditor(); grid.append(add);
   }
+  libraryLayout.setActive(filter === 'all');
   renderLibraryMetrics();
 }
 function projectCard(item) {
@@ -206,33 +217,60 @@ function projectCard(item) {
 }
 
 function setSourceMode(mode) {
+  clipEditor.pause(); $('source-preview').querySelectorAll('video').forEach(video => video.pause());
   sourceMode = mode;
   document.querySelectorAll('[data-source]').forEach(b => b.classList.toggle('selected', b.dataset.source === mode));
   $('youtube-fields').hidden = mode !== 'youtube'; $('upload-fields').hidden = mode !== 'upload';
   $('youtube-metrics-help').textContent = connection?.youtubeMetricsConfigured
     ? 'Al guardar el proyecto verás las cifras en su tarjeta de Studio. Publícalo para mostrarlas en la web. Se actualizan aproximadamente cada hora; los datos no disponibles se indican con —.'
     : 'Falta conectar YouTube Data API. Puedes guardar esta opción; las cifras aparecerán cuando se configure el servicio.';
-  $('upload-btn').disabled = !connection?.uploadsConfigured;
+  updateUploadControls();
   $('upload-notice').hidden = Boolean(connection?.uploadsConfigured);
+}
+function updateUploadControls() {
+  $('upload-btn').textContent = selectedFile || !source?.assetId ? 'Preparar video' : 'Actualizar vista previa';
+  $('upload-btn').disabled = uploadRunning || !connection?.uploadsConfigured || (!selectedFile && (!source?.assetId || !previewChanged));
+  $('video-file').disabled = uploadRunning;
+  $('preview-change-note').hidden = !previewChanged;
+  clipEditor.setLocked(uploadRunning);
 }
 function showSource() {
   const box = $('source-preview'); box.replaceChildren(); box.hidden = !source;
   $('check-youtube-metrics').disabled = !connection?.youtubeMetricsConfigured || source?.type !== 'youtube';
   $('youtube-metrics-result').hidden = true;
   $('project-featured').disabled = !source?.preview;
+  box.classList.toggle('prepared-video', source?.type === 'video');
   if (!source) return;
-  if (source.poster || source.youtubeId) { const image = el('img'); image.src = source.poster || thumbnail(source.youtubeId); image.alt = 'Portada del proyecto'; box.append(image); }
-  else if (source.preview) { const video = el('video'); video.src = source.preview.startsWith('http') ? source.preview : `/${source.preview}`; video.controls = true; video.muted = true; box.append(video); }
-  box.append(el('p', '', source.type === 'youtube' ? 'Enlace verificado. Miniatura automática y reproducción desde YouTube.' : 'Video listo. Se conservará la proporción original.'));
+  if (source.type === 'video') {
+    if (!selectedFile) clipEditor.load(source.url || source.preview, { start: preparedStart, editable: Boolean(source.assetId), poster: source.poster });
+    const sample = el('div', 'prepared-sample');
+    if (source.preview) {
+      const video = el('video'); video.src = new URL(source.preview, location.origin).href;
+      video.controls = true; video.muted = true; video.playsInline = true; video.preload = 'metadata'; video.poster = source.poster || '';
+      video.setAttribute('aria-label', 'Fragmento preparado para la tarjeta');
+      video.addEventListener('play', () => clipEditor.pause());
+      sample.append(video);
+    }
+    sample.append(el('p', '', 'Fragmento preparado para tu tarjeta. Guarda el proyecto para conservarlo.'));
+    const cover = el('div', 'prepared-cover');
+    if (source.poster) { const image = el('img'); image.src = source.poster; image.alt = 'Miniatura generada al inicio del fragmento'; cover.append(image); }
+    cover.append(el('p', '', 'Miniatura automática'));
+    box.append(sample, cover);
+  } else {
+    const image = el('img'); image.src = source.poster || thumbnail(source.youtubeId); image.alt = 'Portada del proyecto'; box.append(image);
+    box.append(el('p', '', 'Enlace verificado. Miniatura automática y reproducción desde YouTube.'));
+  }
   $('project-featured').disabled = !source.preview;
   if (!source.preview) $('project-featured').checked = false;
 }
 function openEditor(id = null) {
   projectEnglish?.dispose();
+  clipEditor.reset(); previewChanged = false;
   editing = id; selectedFile = null; pendingUpload = null; filePrepared = false; $('editor-form').reset(); $('editor-message').textContent = '';
   $('drop-zone').querySelector('strong').textContent = '↥ Arrastra tu video aquí';
   const item = catalog.items.find(x => x.id === id);
   source = item ? structuredClone(item.source) : null;
+  preparedStart = sourceClipStart(source);
   $('editor-title').textContent = item ? 'Editar proyecto' : 'Añadir proyecto';
   $('project-category').replaceChildren(...catalog.categories.map(c => { const o = el('option', '', c.name); o.value = c.id; return o; }));
   $('project-category').value = item?.category || (catalog.categories.some(c => c.id === filter) ? filter : catalog.categories[0].id);
@@ -253,13 +291,15 @@ function closeEditor() {
   if (uploadRunning) { toast('Espera a que termine la carga para cerrar el editor.', true); return; }
   editor.close();
 }
-editor.addEventListener('close', () => projectEnglish?.dispose());
+editor.addEventListener('close', () => { projectEnglish?.dispose(); clipEditor.reset(); $('source-preview').querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); }); });
+$('video-player').addEventListener('play', () => $('source-preview').querySelectorAll('video').forEach(video => video.pause()));
 $('close-editor').onclick = closeEditor; $('cancel-editor').onclick = closeEditor;
 editor.addEventListener('cancel', event => { if (uploadRunning || busy) event.preventDefault(); });
 document.querySelectorAll('[data-source]').forEach(button => { button.onclick = () => { if (!uploadRunning) setSourceMode(button.dataset.source); }; });
 $('import-youtube').onclick = () => task(async () => {
   const result = await api('youtube', { method: 'POST', data: { url: $('youtube-url').value } });
   source = { type: 'youtube', youtubeId: result.id, poster: result.poster, url: '', preview: '', assetId: '' };
+  clipEditor.reset(); selectedFile = null; pendingUpload = null; previewChanged = false; updateUploadControls();
   if (!$('project-title').value) $('project-title').value = result.title;
   $('project-aspect').value = result.aspect; $('source-note').textContent = ''; $('editor-message').textContent = ''; showSource(); projectEnglish.schedule();
 });
@@ -275,9 +315,13 @@ $('check-youtube-metrics').onclick = () => task(async () => {
   } catch (error) { result.textContent = error.message; }
 });
 function chooseFile(file) {
+  if (uploadRunning || !file) return;
+  if (file.size > connection.maxUploadMB * 1024 ** 2) { $('editor-message').textContent = `El máximo configurado es ${connection.maxUploadMB} MB.`; return; }
   selectedFile = file;
-  filePrepared = false;
-  if (!file) return;
+  filePrepared = false; previewChanged = false; pendingUpload = null;
+  $('upload-progress').hidden = true; $('retry-upload').hidden = true; $('editor-message').textContent = '';
+  $('source-preview').querySelectorAll('video').forEach(video => video.pause()); $('source-preview').hidden = true;
+  clipEditor.load(file); updateUploadControls();
   $('drop-zone').querySelector('strong').textContent = file.name;
   if (!$('project-title').value) $('project-title').value = file.name.replace(/\.[^.]+$/, '').slice(0, 140);
   projectEnglish.schedule();
@@ -316,6 +360,8 @@ async function waitForVideo() {
     const result = await api(`uploads/${pendingUpload}`);
     if (result.status === 'ready') {
       filePrepared = true;
+      selectedFile = null; preparedStart = clipEditor.start; previewChanged = false;
+      $('video-file').value = ''; $('drop-zone').querySelector('strong').textContent = '↥ Arrastra otro video para reemplazarlo';
       source = result.source; $('project-aspect').value = result.aspect; $('upload-progress').querySelector('progress').value = 100;
       $('upload-progress').querySelector('p').textContent = 'Listo: video optimizado, clip y portada preparados.';
       $('source-note').textContent = ''; $('editor-message').textContent = ''; $('retry-upload').hidden = true; showSource(); return;
@@ -327,22 +373,29 @@ async function waitForVideo() {
 }
 $('upload-btn').onclick = async () => {
   if (uploadRunning || busy) return;
-  if (!selectedFile) { $('editor-message').textContent = 'Selecciona un archivo de video.'; return; }
-  if (selectedFile.size > connection.maxUploadMB * 1024 ** 2) { $('editor-message').textContent = `El máximo configurado es ${connection.maxUploadMB} MB.`; return; }
-  uploadRunning = true; $('upload-btn').disabled = true; $('save-project').disabled = true; $('upload-progress').hidden = false; $('editor-message').textContent = '';
+  if (!selectedFile && !(source?.assetId && previewChanged)) return;
+  uploadRunning = true; filePrepared = false; pendingUpload = null; updateUploadControls();
+  $('save-project').disabled = true; $('upload-progress').hidden = false; $('retry-upload').hidden = true; $('editor-message').textContent = '';
+  $('upload-progress').querySelector('progress').value = 0;
+  $('upload-progress').querySelector('p').textContent = selectedFile ? 'Preparando la carga…' : 'Preparando el nuevo fragmento y su miniatura…';
   try {
-    const ticket = await api('upload-sign', { method: 'POST', data: { size: selectedFile.size, name: selectedFile.name, start: Number($('preview-start').value) } });
-    pendingUpload = ticket.id;
-    await sendFile(selectedFile, ticket);
+    if (selectedFile) {
+      const ticket = await api('upload-sign', { method: 'POST', data: { size: selectedFile.size, name: selectedFile.name, start: clipEditor.start } });
+      await sendFile(selectedFile, ticket);
+      pendingUpload = ticket.id;
+    } else {
+      const result = await api(`uploads/${source.assetId}/preview`, { method: 'POST', data: { start: clipEditor.start } });
+      pendingUpload = result.id;
+    }
     await waitForVideo();
   } catch (e) { $('editor-message').textContent = e.message; $('retry-upload').hidden = !pendingUpload; }
-  finally { uploadRunning = false; $('upload-btn').disabled = !connection.uploadsConfigured; $('save-project').disabled = false; }
+  finally { uploadRunning = false; updateUploadControls(); $('save-project').disabled = false; }
 };
 $('retry-upload').onclick = async () => {
   if (!pendingUpload || uploadRunning) return;
-  uploadRunning = true; $('retry-upload').disabled = true; $('save-project').disabled = true;
+  uploadRunning = true; updateUploadControls(); $('retry-upload').disabled = true; $('save-project').disabled = true;
   try { await waitForVideo(); } catch (e) { $('editor-message').textContent = e.message; }
-  finally { uploadRunning = false; $('retry-upload').disabled = false; $('save-project').disabled = false; }
+  finally { uploadRunning = false; updateUploadControls(); $('retry-upload').disabled = false; $('save-project').disabled = false; }
 };
 $('editor-form').onsubmit = event => {
   event.preventDefault();
@@ -350,6 +403,7 @@ $('editor-form').onsubmit = event => {
   if (!source) { $('editor-message').textContent = 'Obtén los datos de YouTube o prepara un video antes de guardar.'; return; }
   if (sourceMode === 'youtube' && youtubeId($('youtube-url').value) !== source.youtubeId) { $('editor-message').textContent = 'Pulsa «Obtener datos» para comprobar el enlace nuevo.'; return; }
   if (sourceMode === 'upload' && selectedFile && !filePrepared) { $('editor-message').textContent = 'Pulsa «Preparar video» y espera a que termine antes de guardar.'; return; }
+  if (sourceMode === 'upload' && previewChanged) { $('editor-message').textContent = 'Pulsa «Actualizar vista previa» para preparar el fragmento elegido antes de guardar.'; return; }
   if (sourceMode === 'youtube' && source.type !== 'youtube' || sourceMode === 'upload' && source.type === 'youtube') { $('editor-message').textContent = 'Prepara la nueva fuente o vuelve a la pestaña de la fuente actual.'; return; }
   if ($('project-featured').checked && (!$('project-visible').checked || !source.preview)) { $('editor-message').textContent = 'La portada necesita un proyecto visible con un clip preparado.'; return; }
   task(async () => {

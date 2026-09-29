@@ -86,7 +86,18 @@
       <section id="upload-fields" hidden>
         <p id="upload-notice" class="notice" hidden>La subida de archivos todavía necesita conectar el servicio de video. Por ahora puedes añadir enlaces de YouTube y organizar los proyectos existentes.</p>
         <label for="video-file" id="drop-zone" class="drop-zone"><strong>↥ Arrastra tu video aquí</strong><span>o haz clic para elegir un archivo</span><small id="upload-limit">MP4, MOV, WebM y otros formatos de video</small><input id="video-file" type="file" accept="video/*,.mkv,.avi"></label>
-        <div class="field-row"><div><label for="preview-start">Inicio del clip de vista previa (segundos)</label><input id="preview-start" type="number" min="0" max="36000" step="0.1" value="0"><p class="field-help">Generaremos hasta 5 segundos desde este punto, una portada y el video para la web.</p></div></div>
+        <section id="video-preview-editor" class="video-preview-editor" aria-label="Vista previa del video y selección del fragmento" hidden>
+          <div class="preview-heading"><strong>Tu video</strong><span>Reproduce y elige el mejor momento</span></div>
+          <video id="video-player" controls playsinline preload="metadata" aria-label="Reproductor del video completo"></video>
+          <p id="video-player-message" class="field-help" role="status"></p>
+          <div class="preview-heading"><label for="preview-range">Fragmento de vista previa</label><span id="preview-length">5.0 s</span></div>
+          <div class="preview-timeline" aria-hidden="true"><div id="preview-window"></div></div>
+          <input id="preview-range" type="range" min="0" max="0" step="0.1" value="0" aria-label="Inicio del fragmento de vista previa" aria-describedby="preview-selection-help">
+          <div class="preview-timecodes"><span>0:00.0</span><strong id="preview-interval">0:00.0 — 0:05.0</strong><span id="preview-total">—</span></div>
+          <div class="preview-actions"><button type="button" id="preview-use-frame" class="secondary">Empezar aquí</button><button type="button" id="preview-play" class="secondary">▶ Ver selección</button><div><label for="preview-start">Inicio (segundos)</label><input id="preview-start" type="number" min="0" max="36000" step="0.1" value="0"></div></div>
+          <p id="preview-selection-help" class="field-help">La franja verde marca los 5 segundos que se mostrarán en tu tarjeta. Si el video dura menos, se usará completo.</p>
+          <p id="preview-change-note" class="field-help" role="status" hidden>Fragmento modificado. Pulsa «Actualizar vista previa» para preparar el clip y la miniatura.</p>
+        </section>
         <button type="button" class="secondary" id="upload-btn">Preparar video</button>
         <div id="upload-progress" hidden><progress max="100" value="0"></progress><p role="status"></p><button type="button" id="retry-upload" class="text-button" hidden>Comprobar de nuevo</button></div>
       </section>
@@ -124,7 +135,7 @@
   <dialog id="help-dialog" class="help-dialog" aria-labelledby="help-title">
     <div class="dialog-heading"><div><p class="eyebrow">DE LA BIBLIOTECA A TU PORTAFOLIO</p><h2 id="help-title">Tus videos, al día<span>.</span></h2></div><button id="close-help" class="icon-button" aria-label="Cerrar ayuda">✕</button></div>
     <ol class="help-steps">
-      <li><span class="step-number">01</span><div><h3>Añade un video</h3><p>Pulsa <strong>Añadir proyecto</strong>, pega un enlace de YouTube o Shorts y elige <strong>Obtener datos</strong>. El título y la miniatura aparecen automáticamente. Ajusta la categoría y guarda el proyecto.</p><p>Para un archivo de tu computadora, elige <strong>Subir un video → Preparar video</strong>. Al conectar el servicio de video se generarán la versión web, una miniatura y un clip de hasta cinco segundos.</p></div></li>
+      <li><span class="step-number">01</span><div><h3>Añade un video</h3><p>Pulsa <strong>Añadir proyecto</strong>, pega un enlace de YouTube o Shorts y elige <strong>Obtener datos</strong>. El título y la miniatura aparecen automáticamente. Ajusta la categoría y guarda el proyecto.</p><p>Para un archivo de tu computadora, elige <strong>Subir un video</strong>. Reprodúcelo, mueve el selector o pausa y pulsa <strong>Empezar aquí</strong> para elegir el inicio de los cinco segundos. <strong>Ver selección</strong> reproduce ese fragmento. Después pulsa <strong>Preparar video</strong>. También puedes editar el fragmento de los videos subidos al Studio con <strong>Actualizar vista previa</strong>, sin volver a cargar el archivo.</p></div></li>
       <li><span class="step-number">02</span><div><h3>Dale su lugar</h3><p>Arrastra desde <strong>⠿</strong> o usa las flechas para cambiar el orden. <strong>Editar</strong> permite cambiar los textos y la categoría. <strong>Ocultar</strong> lo retira de la vista pública; <strong>Quitar proyecto</strong> lo saca del borrador.</p></div></li>
       <li><span class="step-number">03</span><div><h3>Revisa y publica</h3><p>Pulsa <strong>Guardar borrador</strong> para conservar el orden y los cambios de visibilidad. Comprueba <strong>Vista previa</strong> y elige <strong>Publicar cambios</strong> cuando esté listo. Hasta entonces, tus visitantes ven la versión anterior.</p></div></li>
     </ol>

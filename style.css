@@ -724,6 +724,10 @@ section {
     transition: var(--transition-smooth);
 }
 
+.portfolio-grid.masonry-layout { grid-auto-rows: 1px; row-gap: 0; align-items: start; }
+.portfolio-grid.masonry-layout > .portfolio-card { height: max-content; }
+.portfolio-grid.masonry-layout .card-media { flex-shrink: 0; }
+
 .portfolio-card:hover {
     transform: translateY(-8px);
     border-color: rgba(var(--accent-rgb), 0.5);

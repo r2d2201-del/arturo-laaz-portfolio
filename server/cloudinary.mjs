@@ -28,6 +28,19 @@ export function uploadTicket(env, start = 0) {
     },
   };
 }
+export async function preparePreview(record, start, env, fetcher = fetch) {
+  const params = {
+    timestamp: Math.floor(Date.now() / 1000), public_id: record.publicId, type: 'upload',
+    eager: transforms(start).slice(1).join('|'), eager_async: 'true',
+  };
+  const response = await fetcher(`https://api.cloudinary.com/v1_1/${env.CLOUDINARY_CLOUD_NAME}/video/explicit`, {
+    method: 'POST', body: new URLSearchParams({ ...params, signature: signParameters(params, env.CLOUDINARY_API_SECRET), api_key: env.CLOUDINARY_API_KEY }),
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (!response.ok) throw new Error('No se pudo preparar el nuevo fragmento. Intenta nuevamente.');
+  // Keep the old upload record immutable so published projects and history stay valid.
+  return { id: randomUUID(), publicId: record.publicId, start, size: record.size, createdAt: Date.now() };
+}
 export async function inspectUpload(record, env, fetcher = fetch) {
   // Cloudinary only includes video duration when media metadata is requested.
   const base = `https://api.cloudinary.com/v1_1/${env.CLOUDINARY_CLOUD_NAME}/resources/video/upload/${encodeURIComponent(record.publicId)}?media_metadata=true`;

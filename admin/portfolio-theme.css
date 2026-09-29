@@ -88,8 +88,10 @@ main { margin-left: 208px; padding: 24px 38px 0; }
 .project-card.drag-over { border: 1px solid var(--accent); outline: 2px solid var(--accent); outline-offset: 3px; }
 .project-media { height: 190px; background: #050505; }
 .project-card[data-aspect="portrait"] .project-media video, .project-card[data-aspect="portrait"] .project-media img { background: #080808; }
-/* Todos follows the public portfolio's rows and media proportions. */
+/* Todos follows the public portfolio's mosaic and media proportions. */
 .project-grid[data-filter="all"] { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 1136px; margin-inline: auto; }
+.project-grid.masonry-layout { grid-auto-rows: 1px; row-gap: 0; align-items: start; }
+.project-grid.masonry-layout > * { height: max-content; }
 .project-grid[data-filter="all"] .project-media { height: auto; aspect-ratio: 9 / 16; }
 .project-grid[data-filter="all"] [data-aspect="landscape"] .project-media { aspect-ratio: 16 / 9; }
 .project-grid[data-filter="all"] [data-aspect="square"] .project-media { aspect-ratio: 1; }
@@ -249,3 +251,34 @@ input#project-youtube-metrics::before { content: ''; position: absolute; top: 3p
 input#project-youtube-metrics:checked { background: var(--accent); border-color: var(--accent); }
 input#project-youtube-metrics:checked::before { background: #151515; transform: translateX(18px); }
 input#project-youtube-metrics:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* The full player and selected fragment stay inside the project editor. */
+.video-preview-editor { margin: 20px 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #090909; }
+.preview-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.preview-heading strong { font-family: var(--heading); text-transform: uppercase; font-size: 22px; font-weight: 400; }
+.preview-heading span { font-size: 10px; color: var(--muted); text-align: right; }
+.preview-heading label { margin: 10px 0 0; }
+#video-player { display: block; width: 100%; height: auto; max-height: 360px; min-height: 160px; object-fit: contain; background: #000; border-radius: 8px; }
+.preview-timeline { position: relative; height: 30px; overflow: hidden; border: 1px solid #353535; border-radius: 6px; background: repeating-linear-gradient(90deg,#242424 0,#242424 1px,#131313 1px,#131313 10%); }
+#preview-window { position: absolute; top: 0; bottom: 0; border: 2px solid var(--accent); border-radius: 4px; background: #a3ff5233; min-width: 2px; }
+#preview-range { width: 100%; accent-color: var(--accent); padding: 0; height: 24px; margin: 5px 0; border: 0; cursor: ew-resize; }
+.preview-timecodes { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+.preview-timecodes strong { color: var(--accent); font-weight: 500; }
+.preview-actions { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.preview-actions .secondary { font: inherit; font-size: 11px; padding: 11px 12px; min-height: 40px; }
+.preview-actions>div { margin-left: auto; width: 110px; }
+.preview-actions label { margin: 0 0 5px; font-size: 10px; }
+.preview-actions input { padding: 9px; }
+#preview-change-note { color: var(--accent); }
+.source-preview.prepared-video { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); align-items: start; }
+.source-preview.prepared-video video, .source-preview.prepared-video img { width: 100%; max-width: 100%; height: 150px; object-fit: contain; }
+.prepared-video p { margin-top: 8px; }
+@media(max-width:480px) {
+  .video-preview-editor { padding: 12px; }
+  .preview-heading>span { max-width: 130px; }
+  .preview-actions>div { margin-left: 0; width: 100%; }
+  .preview-actions input { max-width: 120px; }
+  .preview-timecodes { font-size: 9px; }
+  .source-preview.prepared-video { grid-template-columns: 1fr; }
+  .source-preview.prepared-video .prepared-cover img { height: 90px; width: 100px; }
+}

@@ -2,7 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import seed from '../data/catalog.json' with { type: 'json' };
 import { validateCatalog, publicCatalog, youtubeId, thumbnail } from '../lib/catalog.mjs';
 import { verifyPassword, createSession, checkSession, sessionToken, sessionCookie, sameOrigin } from './auth.mjs';
-import { cloudConfigured, uploadTicket, inspectUpload } from './cloudinary.mjs';
+import { cloudConfigured, uploadTicket, inspectUpload, preparePreview } from './cloudinary.mjs';
 import { translateTexts, translationConfigured } from './translate.mjs';
 import { youtubeMetrics, youtubeMetricsConfigured } from './youtube-metrics.mjs';
 
@@ -177,6 +177,20 @@ export function createApi({ store, env = process.env, fetcher = fetch }) {
         const { upload, ...record } = ticket;
         await store.write(`uploads/${ticket.id}`, { ...record, size });
         return json({ id: ticket.id, ...upload });
+      }
+      if (/^\/api\/uploads\/[a-f0-9-]{36}\/preview$/.test(path) && method === 'POST') {
+        if (!cloudConfigured(env)) reject(503, 'El servicio de video no está configurado.');
+        const { start } = await body(req);
+        const existing = await store.read(`uploads/${path.split('/')[3]}`);
+        if (!existing) reject(404, 'Carga no encontrada.');
+        if (existing.data.result?.status !== 'ready') reject(409, 'Espera a que termine de prepararse el video.');
+        const duration = existing.data.result.duration;
+        const rounded = Math.round(start * 10) / 10;
+        if (typeof start !== 'number' || !Number.isFinite(start) || start < 0 || start > 36_000 || rounded >= duration) reject(400, 'Elige un inicio dentro de la duración del video.');
+        if (rounded === existing.data.start) return json({ id: existing.data.id });
+        const record = await preparePreview(existing.data, rounded, env, fetcher);
+        await store.write(`uploads/${record.id}`, record);
+        return json({ id: record.id });
       }
       if (/^\/api\/uploads\/[a-f0-9-]{36}$/.test(path) && method === 'GET') {
         if (!cloudConfigured(env)) reject(503, 'El servicio de video no está configurado.');
