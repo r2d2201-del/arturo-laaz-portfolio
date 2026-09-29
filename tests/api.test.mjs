@@ -116,7 +116,8 @@ test('video readiness checks all three outputs and respects original aspect rati
   const record = uploadTicket(cloud, 1); let heads = 0;
   const fetcher = async (url, options) => {
     if (options.method === 'HEAD') { heads++; return new Response(null, { status: 200 }); }
-    return Response.json({ public_id: record.publicId, resource_type: 'video', version: 42, duration: 30, width: 1080, height: 1920 });
+    const metadata = new URL(url).searchParams.get('media_metadata') === 'true' ? { duration: 30 } : {};
+    return Response.json({ public_id: record.publicId, resource_type: 'video', version: 42, width: 1080, height: 1920, ...metadata });
   };
   const result = await inspectUpload(record, cloud, fetcher);
   assert.equal(result.status, 'ready'); assert.equal(result.aspect, 'portrait'); assert.equal(heads, 3); assert.match(result.source.preview, /ac_none,so_1,du_5/); assert.match(result.source.url, /c_limit,w_1920,h_1920/);

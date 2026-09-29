@@ -29,7 +29,8 @@ export function uploadTicket(env, start = 0) {
   };
 }
 export async function inspectUpload(record, env, fetcher = fetch) {
-  const base = `https://api.cloudinary.com/v1_1/${env.CLOUDINARY_CLOUD_NAME}/resources/video/upload/${encodeURIComponent(record.publicId)}`;
+  // Cloudinary only includes video duration when media metadata is requested.
+  const base = `https://api.cloudinary.com/v1_1/${env.CLOUDINARY_CLOUD_NAME}/resources/video/upload/${encodeURIComponent(record.publicId)}?media_metadata=true`;
   const response = await fetcher(base, {
     headers: { Authorization: `Basic ${Buffer.from(`${env.CLOUDINARY_API_KEY}:${env.CLOUDINARY_API_SECRET}`).toString('base64')}` },
     signal: AbortSignal.timeout(15_000),
