@@ -112,7 +112,7 @@ function render() {
   const visibleItems = catalog.items.filter(item => (filter === 'all' || filter === 'hidden' && !item.visible || item.category === filter) && `${item.title} ${item.description}`.toLocaleLowerCase().includes(query));
   $('nav-count').textContent = catalog.items.length;
   $('results-count').textContent = `${visibleItems.length} proyectos · ${catalog.items.filter(x => x.visible).length} visibles`;
-  const grid = $('project-grid'); grid.replaceChildren();
+  const grid = $('project-grid'); grid.dataset.filter = filter; grid.replaceChildren();
   for (const item of visibleItems) grid.append(projectCard(item));
   $('empty-state').hidden = visibleItems.length > 0;
   if (!query && filter !== 'hidden') {
@@ -123,10 +123,12 @@ function render() {
 function projectCard(item) {
   const card = el('article', `project-card${item.visible ? '' : ' is-hidden'}`); card.dataset.id = item.id; card.dataset.aspect = item.aspect;
   const media = el('div', 'project-media');
-  if (item.source.poster || item.source.type === 'youtube') {
+  if (item.source.preview) {
+    const video = el('video'); video.src = `${new URL(item.source.preview, location.origin).href}#t=0.001`; video.muted = true; video.playsInline = true; video.preload = 'metadata';
+    if (item.source.poster) video.poster = item.source.poster;
+    media.append(video);
+  } else if (item.source.poster || item.source.type === 'youtube') {
     const img = el('img'); img.src = item.source.poster || thumbnail(item.source.youtubeId); img.alt = item.title; img.loading = 'lazy'; media.append(img);
-  } else if (item.source.preview) {
-    const video = el('video'); video.src = `/${item.source.preview.replace(/^\//, '')}#t=0.001`; video.muted = true; video.playsInline = true; video.preload = 'metadata'; media.append(video);
   }
   const flags = el('div', 'card-flags');
   flags.append(el('span', 'pill', item.source.type === 'youtube' ? 'YOUTUBE' : item.aspect === 'portrait' ? 'VERTICAL' : 'VIDEO'));

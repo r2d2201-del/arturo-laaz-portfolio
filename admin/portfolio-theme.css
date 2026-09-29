@@ -88,6 +88,15 @@ main { margin-left: 208px; padding: 24px 38px 0; }
 .project-card.drag-over { border: 1px solid var(--accent); outline: 2px solid var(--accent); outline-offset: 3px; }
 .project-media { height: 190px; background: #050505; }
 .project-card[data-aspect="portrait"] .project-media video, .project-card[data-aspect="portrait"] .project-media img { background: #080808; }
+/* Todos follows the public portfolio's rows and media proportions. */
+.project-grid[data-filter="all"] { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 1136px; margin-inline: auto; }
+.project-grid[data-filter="all"] .project-media { height: auto; aspect-ratio: 9 / 16; }
+.project-grid[data-filter="all"] [data-aspect="landscape"] .project-media { aspect-ratio: 16 / 9; }
+.project-grid[data-filter="all"] [data-aspect="square"] .project-media { aspect-ratio: 1; }
+.project-grid[data-filter="all"] .project-media video, .project-grid[data-filter="all"] .project-media img { position: absolute; inset: 0; object-fit: cover; }
+.project-grid[data-filter="all"] .card-body h3, .project-grid[data-filter="all"] .card-description { white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 1024px) { .project-grid[data-filter="all"] { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 768px) { .project-grid[data-filter="all"] { grid-template-columns: 1fr; } }
 .card-flags { gap: 6px; }
 .pill { font-size: 8px; background: #080808de; color: #e4e4e4; border-color: #ffffff24; border-radius: 30px; }
 .pill.featured { color: #080808; background: var(--accent); border-color: var(--accent); }
