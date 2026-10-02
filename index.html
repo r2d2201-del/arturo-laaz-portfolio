@@ -164,7 +164,6 @@
                     <button class="filter-btn" data-filter="motion-graphics" data-i18n="filter_motion">Motion Graphics</button>
                     <button class="filter-btn" data-filter="youtube" data-i18n="filter_youtube">YouTube / Horizontales</button>
                 </div>
-                <div class="portfolio-share"><button type="button" id="share-category" class="share-link">Copiar enlace de esta categoría</button></div>
                 <p id="portfolio-link-message" class="portfolio-link-message" role="status" hidden></p>
             </div>
 
@@ -808,9 +807,13 @@
             </div>
             <div class="modal-info-bar">
                 <h3 id="modal-title">Título del Video</h3>
-                <span id="modal-category" class="modal-cat-badge">Categoría</span>
+                <div class="modal-category-actions">
+                    <span id="modal-category" class="modal-cat-badge">Categoría</span>
+                    <button type="button" id="share-video" class="link-icon" aria-label="Copiar enlace del video" title="Copiar enlace del video">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m10 13 4-4m-6 6-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(1 1)"/></svg>
+                    </button>
+                </div>
             </div>
-            <div class="modal-share"><button type="button" id="share-video" class="share-link">Copiar enlace del video</button></div>
         </div>
     </div>
 

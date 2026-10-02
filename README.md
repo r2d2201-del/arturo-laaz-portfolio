@@ -13,7 +13,7 @@ Portafolio público y panel privado en `/admin/`. Conserva los 23 proyectos orig
 
 ### Enlaces para compartir e idioma del visitante
 
-En Studio, selecciona una categoría y pulsa **Copiar enlace de esta categoría**. Cada tarjeta tiene **Copiar enlace** para abrir ese video directamente en el portafolio. El selector **Idioma del enlace** permite elegir automático, español o inglés. Solo se comparten categorías/proyectos ya publicados; los ocultos no tienen enlace público. Copiar no guarda ni publica el borrador. La web también ofrece copiar la categoría y, dentro del reproductor, el video.
+En Studio, selecciona una categoría y pulsa **Copiar enlace de esta categoría**. Cada tarjeta tiene **Copiar enlace** para abrir ese video directamente en el portafolio. El selector **Idioma del enlace** permite elegir automático, español o inglés. Solo se comparten categorías/proyectos ya publicados; los ocultos no tienen enlace público. Copiar no guarda ni publica el borrador. En la web pública, cada categoría muestra un icono de enlace al pasar el cursor o enfocar con teclado; en pantallas táctiles permanece visible. Copia esa categoría sin cambiar el filtro activo. El reproductor tiene un icono permanente junto a su etiqueta de categoría para copiar el video.
 
 - Categoría: `/?category=youtube#portfolio` (usa el identificador de la categoría, estable al renombrarla).
 - Video: `/?video=IDENTIFICADOR#portfolio` (usa el identificador del proyecto, estable al cambiar título/categoría).

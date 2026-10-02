@@ -1,4 +1,27 @@
-.portfolio-share { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.filter-pill { position: relative; max-width: 100%; min-width: 0; }
+.filter-pill .filter-btn { width: 100%; }
+.filter-label { display: block; overflow-wrap: anywhere; transition: transform 200ms ease; }
+.link-icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--accent); cursor: pointer; }
+.link-icon svg { width: 17px; height: 17px; pointer-events: none; }
+.link-icon:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.link-icon[hidden] { display: none; }
+.category-share { position: absolute; top: 50%; right: 5px; width: 28px; color: var(--text-muted); opacity: 0; pointer-events: none; transform: translateY(calc(-50% + 4px)); transition: opacity 200ms ease, transform 200ms ease, background-color 200ms ease; }
+.filter-btn.active + .category-share { color: var(--bg-primary); }
+.filter-pill:is(:hover, :has(:focus-visible)) .filter-label { transform: translateX(-12px); }
+.filter-pill:is(:hover, :has(:focus-visible)) .category-share { opacity: .8; pointer-events: auto; transform: translateY(-50%); }
+.filter-pill .category-share:is(:hover, :focus-visible) { opacity: 1; background: #ffffff12; }
+.filter-btn.active + .category-share:is(:hover, :focus-visible) { background: #00000012; }
+.modal-category-actions { display: flex; align-items: center; gap: 8px; max-width: 100%; }
+.modal-category-actions .modal-cat-badge { min-width: 0; overflow-wrap: anywhere; }
+.modal-category-actions .link-icon { opacity: .75; transition: opacity 200ms ease, background-color 200ms ease; }
+.modal-category-actions .link-icon:is(:hover, :focus-visible) { opacity: 1; background: var(--accent-muted); }
+@media (hover: none), (pointer: coarse), (max-width: 600px) {
+    .filter-label { transform: translateX(-12px); }
+    .filter-pill .category-share { opacity: .7; pointer-events: auto; transform: translateY(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .filter-label, .category-share, .modal-category-actions .link-icon { transition: none; }
+}
 .share-link { font: inherit; font-size: 13px; color: #a3ff47; background: transparent; border: 1px solid #343434; border-radius: 8px; padding: 10px 15px; cursor: pointer; }
 .share-link:hover { border-color: #a3ff47; }
 .share-link:focus-visible { outline: 2px solid #a3ff47; outline-offset: 4px; }
@@ -10,10 +33,9 @@
 .modal-container { max-height: calc(100dvh - 32px); overflow-y: auto; }
 .modal-video-wrapper { flex-shrink: 0; max-height: calc(100dvh - 210px); }
 .modal-info-bar h3 { min-width: 0; overflow-wrap: anywhere; }
-.modal-share { display: flex; justify-content: flex-end; padding: 0 20px 16px; }
 #share-feedback { position: fixed; z-index: 10010; bottom: 24px; left: 50%; transform: translateX(-50%); max-width: 90vw; padding: 12px 22px; border-radius: 8px; background: #a3ff47; color: #101010; font: 14px/1.5 sans-serif; box-shadow: 0 8px 32px #0008; }
 .studio-share-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 16px 0; }
 .studio-share-tools label { margin: 0; font-size: 11px; }
 .studio-share-tools select { width: auto; max-width: 100%; margin-left: 8px; font-size: 12px; }
 .project-share { margin-top: 15px; font-size: 11px; }
-@media (max-width: 600px) { .modal-share { justify-content: flex-start; } .studio-share-tools label { width: 100%; } }
+@media (max-width: 600px) { .studio-share-tools label { width: 100%; } }

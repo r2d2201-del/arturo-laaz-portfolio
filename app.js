@@ -324,12 +324,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     filterButtons.forEach(button => {
+        // Two sibling controls share one pill: selecting and copying remain independent.
+        const pill = document.createElement('div');
+        pill.className = 'filter-pill';
+        const label = document.createElement('span');
+        label.className = 'filter-label';
+        label.textContent = button.textContent;
+        for (const attribute of ['data-i18n', 'data-category-es', 'data-category-en']) {
+            if (button.hasAttribute(attribute)) {
+                label.setAttribute(attribute, button.getAttribute(attribute));
+                button.removeAttribute(attribute);
+            }
+        }
+        button.replaceChildren(label);
+        button.type = 'button';
+        const share = document.createElement('button');
+        share.type = 'button';
+        share.className = 'category-share link-icon';
+        share.dataset.shareCategory = button.dataset.filter;
+        share.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m10 13 4-4m-6 6-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(1 1)"/></svg>';
+        button.before(pill);
+        pill.append(button, share);
         button.addEventListener('click', () => selectFilter(button.dataset.filter));
-    });
-    document.getElementById('share-category').addEventListener('click', () => {
-        void copyPortfolioLink(portfolioUrl(location.href, {
-            category: currentFilter, language: new URL(location.href).searchParams.get('lang'),
-        }), document.documentElement.lang);
+        share.addEventListener('click', () => {
+            void copyPortfolioLink(portfolioUrl(location.href, {
+                category: button.dataset.filter, language: new URL(location.href).searchParams.get('lang'),
+            }), document.documentElement.lang);
+        });
     });
 
     if (loadMoreBtn) {
@@ -835,8 +856,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function setLanguage(lang) {
         document.documentElement.lang = lang;
-        document.getElementById('share-category').textContent = lang === 'en' ? 'Copy category link' : 'Copiar enlace de esta categoría';
-        document.getElementById('share-video').textContent = lang === 'en' ? 'Copy video link' : 'Copiar enlace del video';
+        const videoShare = document.getElementById('share-video');
+        videoShare.title = lang === 'en' ? 'Copy video link' : 'Copiar enlace del video';
+        videoShare.setAttribute('aria-label', videoShare.title);
         modalClose.setAttribute('aria-label', lang === 'en' ? 'Close player' : 'Cerrar reproductor');
         linkMessage.textContent = lang === 'en' ? 'This video is no longer available. Explore the other projects below.' : 'Este video ya no está disponible. Puedes explorar los demás proyectos.';
 
@@ -873,6 +895,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         document.querySelectorAll('[data-category-es]').forEach(button => {
             button.textContent = lang === 'en' ? button.dataset.categoryEn : button.dataset.categoryEs;
+        });
+        filterButtons.forEach(button => {
+            const share = button.parentElement.querySelector('.category-share');
+            share.title = `${lang === 'en' ? 'Copy link to' : 'Copiar enlace de'} ${button.textContent}`;
+            share.setAttribute('aria-label', share.title);
         });
         // Translate portfolio cards
         translatePortfolioCards(lang);
