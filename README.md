@@ -11,7 +11,19 @@ Portafolio público y panel privado en `/admin/`. Conserva los 23 proyectos orig
 5. **Versiones anteriores** recupera una publicación como borrador; revisa y publica para restaurarla. **Exportar catálogo** descarga una copia JSON.
 6. **Categorías** o **Editar categorías** permite crear categorías y renombrar las actuales. Guardar mantiene los proyectos asociados y actualiza el borrador; después pulsa **Publicar cambios**.
 
-### Inglés automático
+### Enlaces para compartir e idioma del visitante
+
+En Studio, selecciona una categoría y pulsa **Copiar enlace de esta categoría**. Cada tarjeta tiene **Copiar enlace** para abrir ese video directamente en el portafolio. El selector **Idioma del enlace** permite elegir automático, español o inglés. Solo se comparten categorías/proyectos ya publicados; los ocultos no tienen enlace público. Copiar no guarda ni publica el borrador. La web también ofrece copiar la categoría y, dentro del reproductor, el video.
+
+- Categoría: `/?category=youtube#portfolio` (usa el identificador de la categoría, estable al renombrarla).
+- Video: `/?video=IDENTIFICADOR#portfolio` (usa el identificador del proyecto, estable al cambiar título/categoría).
+- Idioma explícito: añadir `lang=en` o `lang=es`, por ejemplo `/?lang=en&category=youtube#portfolio`.
+
+Los videos compartidos abren el reproductor con controles, sin exigir reproducción automática. Atrás/adelante restaura la categoría o el video. Un video oculto/eliminado muestra un aviso y la biblioteca disponible. Los enlaces copiados nunca incluyen `preview=draft` ni parámetros del panel.
+
+El idioma se resuelve así: idioma válido en el enlace → elección manual guardada en ese navegador → primer idioma ES/EN de las preferencias del navegador → español. La detección automática y abrir un enlace con idioma explícito no sobrescriben la preferencia manual; pulsar ES/EN sí la guarda. El idioma se puede cambiar incluso si el navegador bloquea el almacenamiento local.
+
+### Traducciones de los proyectos
 
 Los títulos, las descripciones y los nombres de categorías se traducen automáticamente al escribir y antes de guardar. El bloque **Inglés automático · Editable** muestra el resultado. Escribir una corrección conserva esa versión incluso cuando cambia el original; **Usar traducción automática** vuelve a la sugerencia actualizada. Una respuesta tardía no reemplaza un texto más reciente. Vaciar la descripción original también vacía su traducción. Las traducciones existentes se respetan como versiones personalizadas.
 

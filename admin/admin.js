@@ -3,6 +3,7 @@ import { translationEditor } from './translation-editor.mjs';
 import { metricsText } from '/lib/youtube-metrics-view.mjs';
 import { videoPreview, sourceClipStart } from './video-preview.mjs';
 import { masonryGrid } from '/lib/masonry.mjs';
+import { portfolioUrl, copyPortfolioLink } from '/lib/portfolio-links.mjs';
 
 const $ = id => document.getElementById(id);
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
@@ -154,6 +155,7 @@ async function enterStudio() {
   }
 }
 function render() {
+  $('share-category').disabled = filter === 'hidden';
   const tabs = $('category-filters'); tabs.replaceChildren();
   for (const category of [{ id: 'all', name: 'Todos' }, ...catalog.categories, { id: 'hidden', name: 'Ocultos' }]) {
     const b = el('button', category.id === filter ? 'active' : '', category.name);
@@ -195,6 +197,11 @@ function projectCard(item) {
     const metrics = el('div', 'studio-metrics'); metrics.dataset.libraryMetricsId = item.source.youtubeId;
     metrics.setAttribute('role', 'group'); metrics.setAttribute('aria-label', 'Métricas de YouTube'); body.append(metrics);
   }
+  const share = el('button', 'share-link project-share', 'Copiar enlace');
+  share.setAttribute('aria-label', `Copiar enlace de ${item.title}`);
+  share.disabled = !item.visible;
+  share.title = item.visible ? 'Compartir este video en el portafolio publicado' : 'Los proyectos ocultos no tienen enlace público';
+  share.onclick = () => void sharePublished({ video: item.id }); body.append(share);
   const bottom = el('div', 'card-bottom');
   const order = el('div', 'card-order');
   const handle = el('button', 'drag-handle', '⠿'); handle.draggable = true; handle.setAttribute('aria-label', `Arrastrar ${item.title}`);
@@ -215,6 +222,20 @@ function projectCard(item) {
   visibility.onclick = () => { item.visible = !item.visible; if (!item.visible && catalog.hero.projectId === item.id) catalog.hero.projectId = null; markDirty(); render(); };
   actions.append(visibility); bottom.append(order, actions); body.append(bottom); card.append(media, body); return card;
 }
+
+async function sharePublished({ category = 'all', video = null } = {}) {
+  try {
+    const published = await api('catalog');
+    if (video && !published.items.some(item => item.id === video && item.visible !== false)) {
+      toast('Publica este proyecto antes de compartir su enlace.', true); return;
+    }
+    if (!video && category !== 'all' && !published.categories.some(item => item.id === category)) {
+      toast('Publica esta categoría antes de compartir su enlace.', true); return;
+    }
+    await copyPortfolioLink(portfolioUrl(location.href, { category, video, language: $('share-language').value }));
+  } catch (error) { toast(error.message, true); }
+}
+$('share-category').onclick = () => { if (filter !== 'hidden') void sharePublished({ category: filter }); };
 
 function setSourceMode(mode) {
   clipEditor.pause(); $('source-preview').querySelectorAll('video').forEach(video => video.pause());

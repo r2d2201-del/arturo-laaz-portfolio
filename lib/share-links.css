@@ -1,0 +1,19 @@
+.portfolio-share { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.share-link { font: inherit; font-size: 13px; color: #a3ff47; background: transparent; border: 1px solid #343434; border-radius: 8px; padding: 10px 15px; cursor: pointer; }
+.share-link:hover { border-color: #a3ff47; }
+.share-link:focus-visible { outline: 2px solid #a3ff47; outline-offset: 4px; }
+.share-link:disabled { opacity: .45; cursor: default; }
+.portfolio-link-message { color: #aaa; margin: 14px auto; font-size: 14px; }
+.portfolio-link-message[hidden], #share-feedback[hidden] { display: none; }
+.modal-info-bar { flex-wrap: wrap; gap: 12px; }
+.video-modal:not(.active) { visibility: hidden; }
+.modal-container { max-height: calc(100dvh - 32px); overflow-y: auto; }
+.modal-video-wrapper { flex-shrink: 0; max-height: calc(100dvh - 210px); }
+.modal-info-bar h3 { min-width: 0; overflow-wrap: anywhere; }
+.modal-share { display: flex; justify-content: flex-end; padding: 0 20px 16px; }
+#share-feedback { position: fixed; z-index: 10010; bottom: 24px; left: 50%; transform: translateX(-50%); max-width: 90vw; padding: 12px 22px; border-radius: 8px; background: #a3ff47; color: #101010; font: 14px/1.5 sans-serif; box-shadow: 0 8px 32px #0008; }
+.studio-share-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 16px 0; }
+.studio-share-tools label { margin: 0; font-size: 11px; }
+.studio-share-tools select { width: auto; max-width: 100%; margin-left: 8px; font-size: 12px; }
+.project-share { margin-top: 15px; font-size: 11px; }
+@media (max-width: 600px) { .modal-share { justify-content: flex-start; } .studio-share-tools label { width: 100%; } }

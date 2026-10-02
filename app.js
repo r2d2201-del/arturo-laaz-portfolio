@@ -1,5 +1,6 @@
 import { loadPortfolio, attachYouTubePreviews, renderYouTubeMetrics } from './catalog-view.mjs';
 import { masonryGrid } from './lib/masonry.mjs';
+import { chooseLanguage, portfolioUrl, readPortfolioRoute, copyPortfolioLink } from './lib/portfolio-links.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
     await loadPortfolio();
@@ -239,19 +240,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Close menu when clicking links & trigger categories
     panelLinks.forEach(link => {
-        link.addEventListener('click', () => {
+        link.addEventListener('click', event => {
             closeMenu();
-            
-            // UX detail: If link has filter data, trigger click on portfolio filter
             const filterLinkValue = link.getAttribute('data-filter-link');
             if (filterLinkValue) {
-                const targetFilterBtn = document.querySelector(`.filter-btn[data-filter="${filterLinkValue}"]`);
-                if (targetFilterBtn) {
-                    // Slight delay to allow smooth scrolling transition first
-                    setTimeout(() => {
-                        targetFilterBtn.click();
-                    }, 400);
-                }
+                event.preventDefault();
+                selectFilter(filterLinkValue);
+                portfolioSection.scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
@@ -269,8 +264,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ITEMS_LIMIT = 6;
     let isExpanded = false;
     let currentFilter = 'all';
+    let activeCard = null;
+    let returnFocus = null;
+    const linkMessage = document.getElementById('portfolio-link-message');
 
-    function updatePortfolio(animate = true) {
+    function writeRoute(video = null, { replace = false, modalEntry = false } = {}) {
+        if (modalEntry) history.replaceState({ ...history.state, portfolioExpanded: isExpanded }, '', location.href);
+        const url = new URL(location.href);
+        url.searchParams.delete('video');
+        url.searchParams.delete('category');
+        if (currentFilter !== 'all' || video) url.searchParams.set('category', currentFilter);
+        if (video) url.searchParams.set('video', video);
+        url.hash = 'portfolio';
+        if (url.href !== location.href) history[replace ? 'replaceState' : 'pushState']({ portfolioModal: modalEntry }, '', url);
+    }
+
+    function selectFilter(filter, { navigate = true } = {}) {
+        currentFilter = [...filterButtons].some(button => button.dataset.filter === filter) ? filter : 'all';
+        isExpanded = false;
+        filterButtons.forEach(button => {
+            const active = button.dataset.filter === currentFilter;
+            button.classList.toggle('active', active); button.setAttribute('aria-pressed', String(active));
+        });
+        linkMessage.hidden = true;
+        updatePortfolio();
+        if (navigate) writeRoute();
+    }
+
+    function updatePortfolio() {
         portfolioLayout.setActive(currentFilter === 'all');
         let matchingCount = 0;
 
@@ -278,47 +299,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             const category = card.getAttribute('data-category');
             const matchesFilter = (currentFilter === 'all' || category === currentFilter);
 
-            if (matchesFilter) {
-                matchingCount++;
-                const shouldShow = isExpanded || (matchingCount <= ITEMS_LIMIT);
-                
-                if (shouldShow) {
-                    if (animate) {
-                        card.style.opacity = '0';
-                        card.style.transform = 'scale(0.95) translateY(10px)';
-                        setTimeout(() => {
-                            card.style.display = 'flex';
-                            card.offsetHeight; // trigger reflow
-                            card.style.opacity = '1';
-                            card.style.transform = 'scale(1) translateY(0)';
-                        }, 200);
-                    } else {
-                        card.style.display = 'flex';
-                        card.style.opacity = '1';
-                        card.style.transform = 'scale(1) translateY(0)';
-                    }
-                } else {
-                    if (animate) {
-                        card.style.opacity = '0';
-                        card.style.transform = 'scale(0.95) translateY(10px)';
-                        setTimeout(() => {
-                            card.style.display = 'none';
-                        }, 200);
-                    } else {
-                        card.style.display = 'none';
-                    }
-                }
-            } else {
-                if (animate) {
-                    card.style.opacity = '0';
-                    card.style.transform = 'scale(0.95) translateY(10px)';
-                    setTimeout(() => {
-                        card.style.display = 'none';
-                    }, 200);
-                } else {
-                    card.style.display = 'none';
-                }
-            }
+            if (matchesFilter) matchingCount++;
+            const visible = matchesFilter && (isExpanded || matchingCount <= ITEMS_LIMIT);
+            card.style.display = visible ? 'flex' : 'none';
+            card.style.opacity = visible ? '1' : '0';
+            card.style.transform = '';
+
         });
 
         // Show/Hide or update Load More button
@@ -337,24 +323,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Initialize portfolio view on load
-    updatePortfolio(false);
-
     filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove active class from all buttons
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            // Add active class to clicked button
-            button.classList.add('active');
-
-            const filterValue = button.getAttribute('data-filter');
-            
-            // Reset expansion state on category change
-            isExpanded = false;
-            currentFilter = filterValue;
-            
-            updatePortfolio(true);
-        });
+        button.addEventListener('click', () => selectFilter(button.dataset.filter));
+    });
+    document.getElementById('share-category').addEventListener('click', () => {
+        void copyPortfolioLink(portfolioUrl(location.href, {
+            category: currentFilter, language: new URL(location.href).searchParams.get('lang'),
+        }), document.documentElement.lang);
     });
 
     if (loadMoreBtn) {
@@ -367,10 +342,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     portfolioSection.scrollIntoView({ behavior: 'smooth' });
                 }
                 setTimeout(() => {
-                    updatePortfolio(true);
+                    updatePortfolio();
                 }, 100);
             } else {
-                updatePortfolio(true);
+                updatePortfolio();
             }
         });
     }
@@ -407,19 +382,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalBackdrop = videoModal.querySelector('.modal-backdrop');
     const modalVideoPlayer = document.getElementById('modal-video-player');
     const modalYoutubeWrapper = document.getElementById('modal-youtube-wrapper');
-    const modalYoutubePlayer = document.getElementById('modal-youtube-player');
+    let modalYoutubePlayer = document.getElementById('modal-youtube-player');
     const modalTitle = document.getElementById('modal-title');
     const modalCategory = document.getElementById('modal-category');
+
+    function setYouTubeSource(src = 'about:blank') {
+        // A fresh browsing context avoids adding iframe navigation to the Back stack.
+        const player = modalYoutubePlayer.cloneNode(false);
+        player.src = src;
+        modalYoutubePlayer.replaceWith(player);
+        modalYoutubePlayer = player;
+    }
 
     portfolioCards.forEach(card => {
         card.addEventListener('keydown', event => {
             if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); card.click(); }
         });
         card.addEventListener('click', () => {
+            if (card.dataset.projectId) writeRoute(card.dataset.projectId, { modalEntry: true });
+            openVideo(card, true);
+        });
+    });
+
+    function openVideo(card, autoplay = false) {
+            if (activeCard === card) return;
+            returnFocus = document.activeElement;
+            activeCard = card;
             const videoPreview = card.querySelector('.card-video-preview source');
             const youtubeId = card.getAttribute('data-youtube-id');
             const fullVideo = card.getAttribute('data-full-video');
-            const category = card.getAttribute('data-category');
             const catText = card.querySelector('.card-category').textContent;
             const titleText = card.querySelector('.card-title').textContent;
 
@@ -442,35 +433,40 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 if (modalYoutubeWrapper && modalYoutubePlayer) {
                     modalYoutubeWrapper.style.display = 'block';
-                    modalYoutubePlayer.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`;
+                    setYouTubeSource(`https://www.youtube.com/embed/${youtubeId}?autoplay=${autoplay ? 1 : 0}&rel=0`);
                 }
             } else {
                 // Play HTML5 Video
                 if (modalYoutubeWrapper && modalYoutubePlayer) {
                     modalYoutubeWrapper.style.display = 'none';
-                    modalYoutubePlayer.src = '';
+                    setYouTubeSource();
                 }
                 if (modalVideoPlayer) {
                     modalVideoPlayer.style.display = 'block';
                     // Use data-full-video if present, otherwise fallback to preview source
                     modalVideoPlayer.src = fullVideo || (videoPreview ? videoPreview.src : '');
                     modalVideoPlayer.load();
-                    modalVideoPlayer.play().catch(error => {
+                    if (autoplay) modalVideoPlayer.play().catch(error => {
                         console.log('Modal video autoplay prevented: ', error);
                     });
                 }
             }
 
-            // Open modal
             videoModal.classList.add('active');
+            videoModal.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
-        });
-    });
+            document.getElementById('share-video').hidden = !card.dataset.projectId;
+            modalClose.focus({ preventScroll: true });
+    }
 
-    function closeModal() {
+    function hideModal() {
+        const wasOpen = Boolean(activeCard);
+        activeCard = null;
         videoModal.classList.remove('active');
+        videoModal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
-        
+        if (wasOpen && returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
+
         // Stop HTML5 video
         if (modalVideoPlayer) {
             modalVideoPlayer.pause();
@@ -480,12 +476,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Stop YouTube video
         if (modalYoutubePlayer) {
-            modalYoutubePlayer.src = '';
+            setYouTubeSource();
         }
         if (modalYoutubeWrapper) {
             modalYoutubeWrapper.style.display = 'none';
         }
     }
+
+    function closeModal() {
+        if (history.state?.portfolioModal && new URL(location.href).searchParams.has('video')) {
+            history.back();
+        } else {
+            hideModal(); writeRoute(null, { replace: true });
+        }
+    }
+    document.getElementById('share-video').addEventListener('click', () => {
+        if (activeCard?.dataset.projectId) void copyPortfolioLink(portfolioUrl(location.href, {
+            video: activeCard.dataset.projectId, language: new URL(location.href).searchParams.get('lang'),
+        }), document.documentElement.lang);
+    });
+    videoModal.addEventListener('keydown', event => {
+        if (event.key !== 'Tab') return;
+        const controls = [...videoModal.querySelectorAll('button, video[controls], iframe')].filter(el => !el.hidden && el.getClientRects().length);
+        const first = controls[0], last = controls.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    });
 
     if (modalClose) modalClose.addEventListener('click', closeModal);
     if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
@@ -819,7 +835,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function setLanguage(lang) {
         document.documentElement.lang = lang;
-        localStorage.setItem('preferredLang', lang);
+        document.getElementById('share-category').textContent = lang === 'en' ? 'Copy category link' : 'Copiar enlace de esta categoría';
+        document.getElementById('share-video').textContent = lang === 'en' ? 'Copy video link' : 'Copiar enlace del video';
+        modalClose.setAttribute('aria-label', lang === 'en' ? 'Close player' : 'Cerrar reproductor');
+        linkMessage.textContent = lang === 'en' ? 'This video is no longer available. Explore the other projects below.' : 'Este video ya no está disponible. Puedes explorar los demás proyectos.';
+
 
         // Update selector UI
         langOpts.forEach(opt => {
@@ -856,6 +876,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         // Translate portfolio cards
         translatePortfolioCards(lang);
+        if (activeCard) {
+            modalTitle.textContent = activeCard.querySelector('.card-title').textContent;
+            modalCategory.textContent = activeCard.querySelector('.card-category').textContent;
+        }
         renderYouTubeMetrics();
 
         // Translate hero info overlay
@@ -865,30 +889,56 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateLoadMoreButtonText();
     }
 
-    // Attach click events to language toggles
     langOpts.forEach(opt => {
         opt.addEventListener('click', () => {
             const selectedLang = opt.getAttribute('data-lang');
+            try { localStorage.setItem('preferredLang', selectedLang); } catch { /* Language switching works without storage. */ }
+            const url = new URL(location.href); url.searchParams.set('lang', selectedLang);
+            history.replaceState(history.state, '', url);
             setLanguage(selectedLang);
         });
     });
 
-    // Detect browser language and initialize
-    const savedLang = localStorage.getItem('preferredLang');
-    let defaultLang = 'es';
-
-    if (savedLang === 'es' || savedLang === 'en') {
-        defaultLang = savedLang;
-    } else {
-        const browserLang = navigator.language || navigator.userLanguage;
-        if (browserLang && browserLang.toLowerCase().startsWith('en')) {
-            defaultLang = 'en';
+    function applyLocation({ scroll = false } = {}) {
+        let saved;
+        try { saved = localStorage.getItem('preferredLang'); } catch { /* Private browsing may disable storage. */ }
+        setLanguage(chooseLanguage(location.href, saved, navigator.languages?.length ? navigator.languages : [navigator.language]));
+        const projects = [...portfolioCards].map(card => ({ id: card.dataset.projectId, category: card.dataset.category }));
+        const route = readPortfolioRoute(location.href, [...filterButtons].map(button => button.dataset.filter), projects);
+        selectFilter(route.category, { navigate: false });
+        if (history.state?.portfolioExpanded) { isExpanded = true; updatePortfolio(); }
+        const card = route.video && [...portfolioCards].find(card => card.dataset.projectId === route.video);
+        if (card) {
+            const matching = [...portfolioCards].filter(item => currentFilter === 'all' || item.dataset.category === currentFilter);
+            if (matching.indexOf(card) >= ITEMS_LIMIT) { isExpanded = true; updatePortfolio(); }
+            openVideo(card);
+        } else hideModal();
+        linkMessage.hidden = !route.unavailable;
+        if (scroll && route.portfolio && (!location.hash || location.hash === '#portfolio')) {
+            requestAnimationFrame(() => portfolioSection.scrollIntoView({ behavior: 'instant' }));
         }
     }
 
-    // Run initialization
+    // Section navigation must leave the shared video/category route behind.
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', event => {
+            const hash = link.getAttribute('href');
+            if (hash === '#portfolio' || hash === '#' || event.defaultPrevented) return;
+            const target = document.getElementById(hash.slice(1));
+            if (!target) return;
+            event.preventDefault();
+            hideModal();
+            const url = new URL(location.href);
+            url.searchParams.delete('video'); url.searchParams.delete('category'); url.hash = hash;
+            history.pushState({}, '', url);
+            target.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
     initializePortfolioCardData();
-    setLanguage(defaultLang);
+    applyLocation({ scroll: true });
+    window.addEventListener('popstate', () => applyLocation({ scroll: true }));
+    window.addEventListener('hashchange', () => applyLocation({ scroll: true }));
     attachYouTubePreviews();
 
 });

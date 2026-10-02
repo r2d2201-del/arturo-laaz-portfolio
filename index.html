@@ -18,6 +18,7 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/lib/share-links.css">
 </head>
 <body>
 
@@ -163,13 +164,15 @@
                     <button class="filter-btn" data-filter="motion-graphics" data-i18n="filter_motion">Motion Graphics</button>
                     <button class="filter-btn" data-filter="youtube" data-i18n="filter_youtube">YouTube / Horizontales</button>
                 </div>
+                <div class="portfolio-share"><button type="button" id="share-category" class="share-link">Copiar enlace de esta categoría</button></div>
+                <p id="portfolio-link-message" class="portfolio-link-message" role="status" hidden></p>
             </div>
 
             <!-- Grid -->
             <div class="portfolio-grid" id="portfolio-grid">
                 <!-- PORTFOLIO_GRID_ITEMS_START -->
                 <!-- Item: Follicle friday DHT -->
-                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="nZrfTONeO-o">
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="nZrfTONeO-o" data-project-id="project-001">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -187,7 +190,7 @@
                     </div>
                 </div>
                 <!-- Item: 1 vs 1 million dollar pokemon items -->
-                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="K5YOoQ1x-Og">
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="K5YOoQ1x-Og" data-project-id="project-002">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -205,7 +208,7 @@
                     </div>
                 </div>
                 <!-- Item: Most disturbing predator -->
-                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="ozBEJk8mE84">
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="ozBEJk8mE84" data-project-id="project-003">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -223,7 +226,7 @@
                     </div>
                 </div>
                 <!-- Item: Animaciones Explicativas & Motion Graphics -->
-                <div class="portfolio-card" data-category="motion-graphics" data-full-video="assets/videos/MOTION__Animaciones Explicativas & Motion Graphics__Diseño Visual Dinámico.mp4">
+                <div class="portfolio-card" data-category="motion-graphics" data-full-video="assets/videos/MOTION__Animaciones Explicativas & Motion Graphics__Diseño Visual Dinámico.mp4" data-project-id="project-004">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -241,7 +244,7 @@
                     </div>
                 </div>
                 <!-- Item: Anuncio meta ADS -->
-                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/AD_Anuncio meta ADS_ Mejor rendimiento.mp4">
+                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/AD_Anuncio meta ADS_ Mejor rendimiento.mp4" data-project-id="project-005">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -259,7 +262,7 @@
                     </div>
                 </div>
                 <!-- Item: Anuncio para meta -->
-                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/AD_Anuncio para meta_Alto CTR.mp4">
+                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/AD_Anuncio para meta_Alto CTR.mp4" data-project-id="project-006">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -277,7 +280,7 @@
                     </div>
                 </div>
                 <!-- Item: Productos o servicios -->
-                <div class="portfolio-card" data-category="ugc-ads">
+                <div class="portfolio-card" data-category="ugc-ads" data-project-id="project-007">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -295,7 +298,7 @@
                     </div>
                 </div>
                 <!-- Item: Contenido para ADS -->
-                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL_Contenido para ADS_Alto rendimiento.mp4">
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL_Contenido para ADS_Alto rendimiento.mp4" data-project-id="project-008">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -313,7 +316,7 @@
                     </div>
                 </div>
                 <!-- Item: LAMBORGHINI VIDEO EVENT -->
-                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL_LAMBORGHINI_VIDEO EVENT_Contenido de marca.mp4">
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL_LAMBORGHINI_VIDEO EVENT_Contenido de marca.mp4" data-project-id="project-009">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -331,7 +334,7 @@
                     </div>
                 </div>
                 <!-- Item: Seguro de vida -->
-                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL_Seguro de vida_Marca Personal.mp4">
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL_Seguro de vida_Marca Personal.mp4" data-project-id="project-010">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -349,7 +352,7 @@
                     </div>
                 </div>
                 <!-- Item: Video AD -->
-                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL__Video AD__Retención Alta.mp4">
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/REEL__Video AD__Retención Alta.mp4" data-project-id="project-011">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -367,7 +370,7 @@
                     </div>
                 </div>
                 <!-- Item: Short de video largo -->
-                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/Reel_Short de video largo.mp4">
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/Reel_Short de video largo.mp4" data-project-id="project-012">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -385,7 +388,7 @@
                     </div>
                 </div>
                 <!-- Item: Short de video long form -->
-                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/Reel_Short de video long form.mp4">
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/Reel_Short de video long form.mp4" data-project-id="project-013">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -403,7 +406,7 @@
                     </div>
                 </div>
                 <!-- Item: Youtube Short Extract -->
-                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/Reel_Youtube Short Extract.mp4">
+                <div class="portfolio-card" data-category="vertical" data-full-video="assets/videos/Reel_Youtube Short Extract.mp4" data-project-id="project-014">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -421,7 +424,7 @@
                     </div>
                 </div>
                 <!-- Item: Outdoor Garmin UGC Dacia -->
-                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/UGC_ Outdoor Garmin UGC Dacia.mp4">
+                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/UGC_ Outdoor Garmin UGC Dacia.mp4" data-project-id="project-015">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -439,7 +442,7 @@
                     </div>
                 </div>
                 <!-- Item: Matching your style UGC Allison -->
-                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/UGC_Matching your style UGC Allison_Alta retención.mp4">
+                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/UGC_Matching your style UGC Allison_Alta retención.mp4" data-project-id="project-016">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -457,7 +460,7 @@
                     </div>
                 </div>
                 <!-- Item: Same watch new vibe UGC Corbin -->
-                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/UGC_Same watch-new vibe UGC Corbin_Alto rendimiento.mp4">
+                <div class="portfolio-card" data-category="ugc-ads" data-full-video="assets/videos/UGC_Same watch-new vibe UGC Corbin_Alto rendimiento.mp4" data-project-id="project-017">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -475,7 +478,7 @@
                     </div>
                 </div>
                 <!-- Item: 3 mistakes -->
-                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-full-video="assets/previews/YOUTUBE_3 mistakes_Content Creator_previews.mp4">
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-full-video="assets/previews/YOUTUBE_3 mistakes_Content Creator_previews.mp4" data-project-id="project-018">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -493,7 +496,7 @@
                     </div>
                 </div>
                 <!-- Item: Cf Moto 675ss -->
-                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="9xX3NSx8Y1I">
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="9xX3NSx8Y1I" data-project-id="project-019">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -511,7 +514,7 @@
                     </div>
                 </div>
                 <!-- Item: Contenido de nicho -->
-                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="INJWilDjGm0">
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="INJWilDjGm0" data-project-id="project-020">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -529,7 +532,7 @@
                     </div>
                 </div>
                 <!-- Item: When Scoring A Goal Got A Player Executed -->
-                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="N2RC40ZEYTg">
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="N2RC40ZEYTg" data-project-id="project-021">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -547,7 +550,7 @@
                     </div>
                 </div>
                 <!-- Item: Follicle Friday -->
-                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="PIq5rBiZjJk">
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="PIq5rBiZjJk" data-project-id="project-022">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -565,7 +568,7 @@
                     </div>
                 </div>
                 <!-- Item: Pyrilutamide -->
-                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="a-7tnHy99eI">
+                <div class="portfolio-card horizontal-ratio" data-category="youtube" data-youtube-id="a-7tnHy99eI" data-project-id="project-023">
                     <div class="card-media">
                         <div class="video-container-card">
                             <video class="card-video-preview" loop muted playsinline preload="metadata">
@@ -789,7 +792,7 @@
     </main>
 
     <!-- Video Modal Lightbox -->
-    <div class="video-modal" id="video-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="video-modal" id="video-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
         <div class="modal-backdrop"></div>
         <div class="modal-container">
             <button class="modal-close" id="modal-close" aria-label="Cerrar reproductor">&times;</button>
@@ -807,6 +810,7 @@
                 <h3 id="modal-title">Título del Video</h3>
                 <span id="modal-category" class="modal-cat-badge">Categoría</span>
             </div>
+            <div class="modal-share"><button type="button" id="share-video" class="share-link">Copiar enlace del video</button></div>
         </div>
     </div>
 

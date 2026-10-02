@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/admin/admin.css">
   <link rel="stylesheet" href="/admin/portfolio-theme.css">
   <script type="module" src="/admin/admin.js"></script>
+  <link rel="stylesheet" href="/lib/share-links.css">
 </head>
 <body>
   <section id="login-screen" class="login-screen">
@@ -62,6 +63,10 @@
         <label class="search"><span>⌕</span><input id="search" type="search" placeholder="Buscar un proyecto" aria-label="Buscar un proyecto"></label>
       </section>
       <div class="library-meta"><p id="results-count"></p><button id="categories-inline" class="text-button">Editar categorías ↗</button><p>⠿ Arrastra para ordenar · Usa las flechas si lo prefieres</p></div>
+      <div class="studio-share-tools">
+        <label for="share-language">Idioma del enlace <select id="share-language"><option value="">Automático · Idioma del visitante</option><option value="es">Español</option><option value="en">English</option></select></label>
+        <button type="button" id="share-category" class="share-link">Copiar enlace de esta categoría</button>
+      </div>
       <section id="project-grid" class="project-grid" aria-label="Proyectos del portafolio"></section>
       <section id="empty-state" class="empty-state" hidden><span>↗</span><h2>Espacio para tu próximo trabajo.</h2><p>Prueba otra búsqueda o añade un proyecto.</p></section>
       <footer class="studio-footer"><span>ARTURO STUDIO</span><button id="help-mobile" class="text-button">Cómo usar el panel</button><button id="history-mobile" class="text-button">Versiones anteriores</button><button id="export-btn" class="text-button">Exportar catálogo ↓</button></footer>
