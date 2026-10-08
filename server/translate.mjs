@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { aiServiceError } from './ai-errors.mjs';
 
 const limits = { title: 140, description: 300, name: 80 };
 const error = (status, message) => Object.assign(new Error(message), { status });
@@ -45,7 +46,7 @@ export async function translateTexts(input, { store, env, fetcher = fetch }) {
         }),
       });
     } catch { throw error(503, 'La traducción tardó demasiado. Tus textos se conservan; pulsa Reintentar.'); }
-    if (!response.ok) throw error(503, 'No se pudo generar el inglés. Comprueba los créditos de IA de Netlify y vuelve a intentarlo.');
+    if (!response.ok) throw await aiServiceError(response);
     let translations;
     try {
       const completion = await response.json();

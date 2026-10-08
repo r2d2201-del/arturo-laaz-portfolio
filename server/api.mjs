@@ -209,7 +209,7 @@ export function createApi({ store, env = process.env, fetcher = fetch }) {
       reject(404, 'Ruta no encontrada.');
     } catch (e) {
       if (!e.status) console.error('Portfolio API:', e.name, e.message);
-      return json({ error: e.status ? e.message : 'No se pudo completar la operación. Tus cambios publicados siguen disponibles; intenta nuevamente.' }, e.status || 502);
+      return json({ error: e.status ? e.message : 'No se pudo completar la operación. Tus cambios publicados siguen disponibles; intenta nuevamente.', ...(e.code?.startsWith('ai_') ? { code: e.code, diagnostic: e.diagnostic } : {}) }, e.status || 502);
     }
   };
 }

@@ -158,7 +158,8 @@ test('translation requires authentication and origin, validates inputs and cache
 test('provider failures and malformed translations never become cached successful translations', async () => {
   for (const fetcher of [async () => new Response(null, { status: 429 }), async () => completion([{ id: 'wrong', text: 'Not the requested field' }]), async () => completion([{ id: 'x', text: 'x'.repeat(81) }])]) {
     const s = setup({ env: aiEnv, fetcher }); await s.login();
-    assert.ok((await s.call('translate', 'POST', { texts: [{ id: 'x', kind: 'name', text: 'Cine' }] })).status >= 500);
+    const result = await s.call('translate', 'POST', { texts: [{ id: 'x', kind: 'name', text: 'Cine' }] });
+    assert.ok(result.status === 429 || result.status >= 500);
     assert.ok([...s.store.values.keys()].every(x => !x.startsWith('translations/')));
   }
   const s = setup(); await s.login();
