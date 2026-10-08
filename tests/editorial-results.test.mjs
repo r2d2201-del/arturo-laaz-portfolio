@@ -70,6 +70,39 @@ test('unavailable AI, rate limits, malformed replies and performance claims do n
   limited.values.set(`editorial-usage/${Math.floor(Date.now() / 3600000)}`, { data: { count: 40 }, etag: 'limit' });
   assert.equal((await limited.call('editorial-suggestions', 'POST', input)).status, 429);
 });
+test('invalid editorial output is regenerated once from confirmed input without caching or reusing the invalid claim', async () => {
+  for (const badTitle of ['Alto CTR garantizado', 'x'.repeat(71)]) {
+    let requests = 0, originalSignal;
+    const invalid = structuredClone(output); invalid.options[0].title = badTitle;
+    const s = setup(async (_url, options) => {
+      requests++;
+      const payload = JSON.parse(options.body);
+      if (requests === 1) originalSignal = options.signal;
+      else {
+        assert.equal(options.signal, originalSignal);
+        assert.match(payload.messages[0].content, /respuesta anterior falló/);
+        assert.ok(!payload.messages[0].content.includes(badTitle));
+        assert.ok([...s.values.keys()].every(k => !k.startsWith('editorial/v1/')));
+      }
+      assert.deepEqual(JSON.parse(payload.messages[1].content).brief, input.brief);
+      return response(requests === 1 ? invalid : output);
+    });
+    await s.login();
+    assert.deepEqual((await s.call('editorial-suggestions', 'POST', input)).data, output);
+    assert.equal(requests, 2);
+    assert.deepEqual((await s.call('editorial-suggestions', 'POST', input)).data, output);
+    assert.equal(requests, 2);
+  }
+  let requests = 0;
+  const bad = structuredClone(output); bad.options[0].description = 'x'.repeat(181);
+  const persistent = setup(async () => { requests++; return response(bad); });
+  await persistent.login();
+  const result = await persistent.call('editorial-suggestions', 'POST', input);
+  assert.equal(result.status, 502); assert.equal(requests, 2);
+  assert.equal(result.data.code, 'ai_invalid_output');
+  assert.deepEqual(result.data.diagnostic, { reason: 'description_text_or_length' });
+  assert.ok([...persistent.values.keys()].every(k => !k.startsWith('editorial/v1/')));
+});
 test('stale suggestions cannot overwrite edits, cross dialogs or be applied twice', async () => {
   let state = structuredClone(input), applied = [];
   const session = suggestionSession(() => state, option => { applied.push(option); });
