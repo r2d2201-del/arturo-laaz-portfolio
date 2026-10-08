@@ -62,7 +62,7 @@
                         <a href="#metrics" class="panel-link" data-i18n="panel_explore_philosophy">Filosofía</a>
                         <a href="#portfolio" class="panel-link" data-i18n="panel_explore_portfolio">Portafolio</a>
                         <a href="#process" class="panel-link" data-i18n="panel_explore_methodology">Metodología</a>
-                        <a href="#testimonials" class="panel-link" data-i18n="panel_explore_testimonials">Testimonios</a>
+                        <a href="#testimonials" hidden class="panel-link" data-i18n="panel_explore_testimonials">Testimonios</a>
                     </div>
                     <div class="panel-col panel-contact">
                         <h4 data-i18n="panel_contact_title">Hablemos</h4>
@@ -622,80 +622,12 @@
             </div>
         </section>
 
-        <!-- Testimonials Section -->
-        <section class="testimonials-section" id="testimonials">
+        <!-- Real client feedback is loaded from the published catalog. -->
+        <section class="testimonials-section" id="testimonials" hidden>
             <div class="testimonials-container">
                 <h2 class="section-title" data-i18n="testimonials_title">LO QUE DICEN MIS CLIENTES</h2>
-                <p class="section-tagline" data-i18n="testimonials_tagline">Opiniones de creadores y marcas que ya escalaron su contenido.</p>
-                
-                <div class="testimonials-slider-container">
-                    <div class="testimonials-slider" id="testimonials-slider">
-                        
-                        <!-- Slide 1 -->
-                        <div class="testimonial-slide active">
-                            <div class="testimonial-rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                            <p class="testimonial-text" data-i18n="testimonial1_text">"La retención de nuestros reels aumentó drásticamente desde que trabajamos con Arturo. Pasamos de tener 15% de usuarios viendo hasta el final a más de un 45%. Su edición es dinámica y entiende perfectamente lo que capta el ojo en móvil."</p>
-                            <div class="testimonial-author">
-                                <div class="author-avatar"><i class="fa-solid fa-user-tie"></i></div>
-                                <div class="author-meta">
-                                    <h4>Carlos Mendoza</h4>
-                                    <p data-i18n="testimonial1_role">Creador de Finanzas & Info-productor</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 2 -->
-                        <div class="testimonial-slide">
-                            <div class="testimonial-rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                            <p class="testimonial-text" data-i18n="testimonial2_text">"Nuestros costes por clic (CPC) bajaron a la mitad con los creativos UGC que nos editó Arturo. Su capacidad para colocar subtítulos animados y transiciones rápidas es increíble. Totalmente recomendado si corres anuncios."</p>
-                            <div class="testimonial-author">
-                                <div class="author-avatar"><i class="fa-solid fa-building"></i></div>
-                                <div class="author-meta">
-                                    <h4>Sofía Rivas</h4>
-                                    <p data-i18n="testimonial2_role">Directora de Ad-Growth en Nova Media</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 3 -->
-                        <div class="testimonial-slide">
-                            <div class="testimonial-rating">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                            <p class="testimonial-text" data-i18n="testimonial3_text">"Trabajar con Arturo es una tranquilidad inmensa. Entrega siempre a tiempo, acepta comentarios constructivos y su criterio de edición de sonido es de nivel cinematográfico. Mi canal de YouTube ha crecido un 30%."</p>
-                            <div class="testimonial-author">
-                                <div class="author-avatar"><i class="fa-solid fa-user-ninja"></i></div>
-                                <div class="author-meta">
-                                    <h4>Marcos 'Kael' Gómez</h4>
-                                    <p data-i18n="testimonial3_role">Youtuber de Tecnología (250K+ subs)</p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    
-                    <!-- Slider Nav -->
-                    <div class="slider-controls">
-                        <button class="slider-btn prev" id="slider-prev" aria-label="Anterior"><i class="fa-solid fa-arrow-left"></i></button>
-                        <button class="slider-btn next" id="slider-next" aria-label="Siguiente"><i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                </div>
+                <p class="section-tagline" data-i18n="testimonials_tagline">Comentarios reales, con su contexto y fuente.</p>
+                <div id="client-reviews" class="client-reviews"></div>
             </div>
         </section>
 
@@ -814,6 +746,7 @@
                     </button>
                 </div>
             </div>
+            <div id="project-details" class="project-details" hidden></div>
         </div>
     </div>
 

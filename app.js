@@ -1,4 +1,4 @@
-import { loadPortfolio, attachYouTubePreviews, renderYouTubeMetrics } from './catalog-view.mjs';
+import { loadPortfolio, attachYouTubePreviews, renderYouTubeMetrics, renderClientResults, renderProjectDetails } from './catalog-view.mjs';
 import { masonryGrid } from './lib/masonry.mjs';
 import { chooseLanguage, portfolioUrl, readPortfolioRoute, copyPortfolioLink } from './lib/portfolio-links.mjs';
 
@@ -59,13 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             step3_title: "Revisión & Entrega",
             step3_desc: "Te envío el primer corte para que lo revises y envíes tu feedback,para ajustes rápidos y precisos. Te entrego los archivos finales renderizados en máxima calidad y optimizados para cada red social.",
             testimonials_title: "LO QUE DICEN MIS CLIENTES",
-            testimonials_tagline: "Opiniones de creadores y marcas que ya escalaron su contenido.",
-            testimonial1_text: "\"La retención de nuestros reels aumentó drásticamente desde que trabajamos con Arturo. Pasamos de tener 15% de usuarios viendo hasta el final a más de un 45%. Su edición es dinámica y entiende perfectamente lo que capta el ojo en móvil.\"",
-            testimonial1_role: "Creador de Finanzas & Info-productor",
-            testimonial2_text: "\"Nuestros costes por clic (CPC) bajaron a la mitad con los creativos UGC que nos editó Arturo. Su capacidad para colocar subtítulos animados y transiciones rápidas es increíble. Totalmente recomendado si corres anuncios.\"",
-            testimonial2_role: "Directora de Ad-Growth en Nova Media",
-            testimonial3_text: "\"Trabajar con Arturo es una tranquilidad inmensa. Entrega siempre a tiempo, acepta comentarios constructivos y su criterio de edición de sonido es de nivel cinematográfico. Mi canal de YouTube ha crecido un 30%.\"",
-            testimonial3_role: "Youtuber de Tecnología (250K+ subs)",
+            testimonials_tagline: "Comentarios reales, con su contexto y fuente.",
             contact_title: "¿LISTO PARA ESCALAR TUS VÍDEOS?",
             contact_desc: "Cuéntame sobre tu proyecto y necesidades. Rellena este formulario rápido de calificación y me pondré en contacto contigo en menos de 24 horas para darte una propuesta.",
             contact_email_label: "Envíame un email",
@@ -143,13 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             step3_title: "Review & Delivery",
             step3_desc: "I send you the first cut for review and feedback for quick, precise adjustments. I deliver the final files rendered in maximum quality and optimized for each social network.",
             testimonials_title: "WHAT MY CLIENTS SAY",
-            testimonials_tagline: "Reviews from creators and brands who have already scaled their content.",
-            testimonial1_text: "\"The retention of our reels increased drastically since working with Arturo. We went from having 15% of users watching until the end to over 45%. His editing is dynamic and he perfectly understands what catches the eye on mobile.\"",
-            testimonial1_role: "Finance Creator & Info-producer",
-            testimonial2_text: "\"Our cost-per-click (CPC) dropped in half with the UGC creatives Arturo edited for us. His ability to place animated captions and quick transitions is incredible. Highly recommended if you run ads.\"",
-            testimonial2_role: "Director of Ad-Growth at Nova Media",
-            testimonial3_text: "\"Working with Arturo is an immense peace of mind. He always delivers on time, accepts constructive feedback, and his sound design editing criteria is of cinematic level. My YouTube channel has grown by 30%.\"",
-            testimonial3_role: "Tech YouTuber (250K+ subs)",
+            testimonials_tagline: "Real client feedback, with context and sources.",
             contact_title: "READY TO SCALE YOUR VIDEOS?",
             contact_desc: "Tell me about your project and needs. Fill out this quick qualification form and I'll get in touch with you in less than 24 hours to give you a proposal.",
             contact_email_label: "Send me an email",
@@ -429,6 +417,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (activeCard === card) return;
             returnFocus = document.activeElement;
             activeCard = card;
+            renderProjectDetails(card.dataset.projectId);
             const videoPreview = card.querySelector('.card-video-preview source');
             const youtubeId = card.getAttribute('data-youtube-id');
             const fullVideo = card.getAttribute('data-full-video');
@@ -533,51 +522,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             closeModal();
         }
     });
-
-    /* ==========================================
-       5. Testimonials Slider
-       ========================================== */
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const prevBtn = document.getElementById('slider-prev');
-    const nextBtn = document.getElementById('slider-next');
-    let currentSlide = 0;
-    let autoSlideInterval;
-
-    function showSlide(index) {
-        slides.forEach(slide => slide.classList.remove('active'));
-        
-        currentSlide = (index + slides.length) % slides.length;
-        slides[currentSlide].classList.add('active');
-    }
-
-    function handleNextSlide() {
-        showSlide(currentSlide + 1);
-        resetAutoSlide();
-    }
-
-    function handlePrevSlide() {
-        showSlide(currentSlide - 1);
-        resetAutoSlide();
-    }
-
-    if (nextBtn) nextBtn.addEventListener('click', handleNextSlide);
-    if (prevBtn) prevBtn.addEventListener('click', handlePrevSlide);
-
-    // Auto-sliding every 6 seconds
-    function startAutoSlide() {
-        autoSlideInterval = setInterval(() => {
-            showSlide(currentSlide + 1);
-        }, 6000);
-    }
-
-    function resetAutoSlide() {
-        clearInterval(autoSlideInterval);
-        startAutoSlide();
-    }
-
-    if (slides.length > 0) {
-        startAutoSlide();
-    }
 
     /* ==========================================
        6. Funnel Contact Form Qualifying Submission
@@ -908,6 +852,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             modalCategory.textContent = activeCard.querySelector('.card-category').textContent;
         }
         renderYouTubeMetrics();
+        renderClientResults();
+        if (activeCard) renderProjectDetails(activeCard.dataset.projectId);
 
         // Translate hero info overlay
         translateHeroOverlay(lang);
@@ -941,6 +887,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             openVideo(card);
         } else hideModal();
         linkMessage.hidden = !route.unavailable;
+        if (scroll && location.hash === '#testimonials' && !document.getElementById('testimonials').hidden) {
+            requestAnimationFrame(() => document.getElementById('testimonials').scrollIntoView({ behavior: 'instant' }));
+        }
         if (scroll && route.portfolio && (!location.hash || location.hash === '#portfolio')) {
             requestAnimationFrame(() => portfolioSection.scrollIntoView({ behavior: 'instant' }));
         }

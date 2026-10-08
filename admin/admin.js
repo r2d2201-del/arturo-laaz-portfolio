@@ -4,6 +4,9 @@ import { metricsText } from '/lib/youtube-metrics-view.mjs';
 import { videoPreview, sourceClipStart } from './video-preview.mjs';
 import { masonryGrid } from '/lib/masonry.mjs';
 import { portfolioUrl, copyPortfolioLink } from '/lib/portfolio-links.mjs';
+import { editorialEditor, readBrief } from './editorial-editor.mjs';
+import { reportsEditor, renderFeedbackLibrary } from './reports-editor.mjs';
+import { validateReports } from '/lib/client-results.mjs';
 
 const $ = id => document.getElementById(id);
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
@@ -20,7 +23,45 @@ const clipEditor = videoPreview($('video-preview-editor'), () => {
 const editor = $('editor');
 const libraryLayout = masonryGrid($('project-grid'));
 let toastTimer;
-let projectEnglish, categoryEditors = [];
+let projectEnglish, projectEditorial, categoryEditors = [];
+let studioPage = 'library';
+const reports = reportsEditor({ getCatalog: () => catalog, save: async (reports, links) => {
+  catalog.reports = reports;
+  for (const item of catalog.items) if (Object.hasOwn(links, item.id)) item.batch = links[item.id];
+  markDirty(); await saveDraft(); render(); toast('Feedback guardado. Revisa Vista previa antes de publicar.');
+} });
+function showPage(page) {
+  studioPage = page;
+  window.history.replaceState(null, '', page === 'feedback' ? '#feedback' : location.pathname + location.search);
+  for (const name of ['library', 'feedback']) {
+    document.getElementById(name + '-page').hidden = name !== page;
+    document.getElementById(name + '-heading').hidden = name !== page;
+    for (const prefix of ['nav-', 'mobile-']) {
+      const control = document.getElementById(prefix + name);
+      control.classList.toggle('active', name === page);
+      if (name === page) control.setAttribute('aria-current', 'page'); else control.removeAttribute('aria-current');
+    }
+  }
+  libraryLayout.setActive(page === 'library' && filter === 'all');
+  if (page === 'feedback') renderFeedbackLibrary(catalog, reports.open);
+}
+$('nav-feedback').onclick = $('mobile-feedback').onclick = () => showPage('feedback');
+$('mobile-library').onclick = () => showPage('library');
+$('feedback-add').onclick = () => reports.open();
+$('feedback-results-add').onclick = () => reports.open({ kind: 'results' });
+$('feedback-search').oninput = () => renderFeedbackLibrary(catalog, reports.open);
+$('feedback-import').onclick = () => $('feedback-import-file').click();
+$('feedback-import-file').onchange = async event => {
+  const file = event.target.files?.[0]; if (!file) return;
+  try {
+    if (file.size > 1000000) throw new Error('El archivo supera el tamaño permitido.');
+    const data = JSON.parse(await file.text());
+    const incoming = validateReports(Array.isArray(data) ? data : [data]);
+    if (!incoming.length) throw new Error('El archivo no contiene feedback.');
+    reports.open({ incoming });
+  } catch (e) { toast(e instanceof SyntaxError ? 'El archivo no contiene feedback JSON válido.' : e.message, true); }
+  finally { event.target.value = ''; }
+};
 const libraryMetrics = new Map();
 let libraryMetricsRequest = 0;
 let translationQueue = [], translationTimer, translationPipeline = Promise.resolve();
@@ -138,6 +179,7 @@ async function enterStudio() {
   connection = await api('status');
   $('studio').hidden = false; $('login-screen').hidden = true;
   await refresh();
+  showPage(location.hash === '#feedback' ? 'feedback' : 'library');
   $('upload-limit').textContent = `Hasta ${connection.maxUploadMB} MB por archivo · MP4, MOV, WebM y más`;
   if (!connection.uploadsConfigured) {
     $('service-notice').textContent = 'La biblioteca y los enlaces de YouTube están disponibles. Falta conectar el servicio de video para preparar archivos desde tu computadora.';
@@ -172,7 +214,8 @@ function render() {
     const add = el('button', 'project-add'); add.append(el('span', 'plus', '+'), el('strong', '', 'Un nuevo proyecto'), el('small', '', 'Sube un video o pega un enlace'));
     add.onclick = () => openEditor(); grid.append(add);
   }
-  libraryLayout.setActive(filter === 'all');
+  libraryLayout.setActive(studioPage === 'library' && filter === 'all');
+  renderFeedbackLibrary(catalog, reports.open);
   renderLibraryMetrics();
 }
 function projectCard(item) {
@@ -193,6 +236,9 @@ function projectCard(item) {
   media.append(flags, edit);
   const body = el('div', 'card-body');
   body.append(el('p', 'card-category', catalog.categories.find(x => x.id === item.category)?.name), el('h3', '', item.title), el('p', 'card-description', item.description));
+  const reviewCount = (catalog.reports || []).filter(r => r.kind === 'review' && r.projectIds?.includes(item.id)).length;
+  if (reviewCount) body.append(el('p', 'field-help', `${reviewCount} comentarios asociados`));
+  if (item.batch) body.append(el('p', 'field-help', `Batch ${item.batch.code} · ${catalog.reports?.find(r => r.id === item.batch.reportId)?.client || ''}`));
   if (item.source.type === 'youtube' && item.showYoutubeMetrics) {
     const metrics = el('div', 'studio-metrics'); metrics.dataset.libraryMetricsId = item.source.youtubeId;
     metrics.setAttribute('role', 'group'); metrics.setAttribute('aria-label', 'Métricas de YouTube'); body.append(metrics);
@@ -286,6 +332,7 @@ function showSource() {
 }
 function openEditor(id = null) {
   projectEnglish?.dispose();
+  projectEditorial?.dispose();
   clipEditor.reset(); previewChanged = false;
   editing = id; selectedFile = null; pendingUpload = null; filePrepared = false; $('editor-form').reset(); $('editor-message').textContent = '';
   $('drop-zone').querySelector('strong').textContent = '↥ Arrastra tu video aquí';
@@ -306,13 +353,17 @@ function openEditor(id = null) {
   projectEnglish = translationEditor(['title', 'description'].map(key => ({
     key, source: $(`project-${key}`), target: $(`project-${key}-en`), status: $(`${key}-translation-status`), reset: $(`${key}-translation-reset`),
   })), item?.english, requestTranslations);
+  projectEditorial = editorialEditor(item, data => api('editorial-suggestions', { method: 'POST', data }), () => projectEnglish.schedule());
+  const associated = item ? (catalog.reports || []).filter(r => r.id === item.batch?.reportId || r.projectIds?.includes(item.id)) : [];
+  $('project-feedback-summary').hidden = !associated.length;
+  $('project-feedback-summary').textContent = associated.length ? `Feedback asociado: ${associated.map(r => r.client).join(', ')}. Gestiona sus vínculos desde Feedback de clientes.` : '';
   setSourceMode(item?.source.type === 'video' ? 'upload' : 'youtube'); showSource(); editor.showModal();
 }
 function closeEditor() {
   if (uploadRunning) { toast('Espera a que termine la carga para cerrar el editor.', true); return; }
   editor.close();
 }
-editor.addEventListener('close', () => { projectEnglish?.dispose(); clipEditor.reset(); $('source-preview').querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); }); });
+editor.addEventListener('close', () => { projectEnglish?.dispose(); projectEditorial?.dispose(); clipEditor.reset(); $('source-preview').querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); }); });
 $('video-player').addEventListener('play', () => $('source-preview').querySelectorAll('video').forEach(video => video.pause()));
 $('close-editor').onclick = closeEditor; $('cancel-editor').onclick = closeEditor;
 editor.addEventListener('cancel', event => { if (uploadRunning || busy) event.preventDefault(); });
@@ -434,6 +485,7 @@ $('editor-form').onsubmit = event => {
     const previous = catalog.items.find(x => x.id === id);
     const note = previous && JSON.stringify(previous.source) === JSON.stringify(source) ? previous.note : '';
     const item = { id, title: $('project-title').value.trim(), titleEn: $('project-title-en').value.trim(), description: $('project-description').value.trim(), descriptionEn: $('project-description-en').value.trim(), english: projectEnglish.metadata(), category: $('project-category').value, aspect: $('project-aspect').value, visible: $('project-visible').checked, showYoutubeMetrics: source.type === 'youtube' && $('project-youtube-metrics').checked, source, note };
+    item.editorial = readBrief(); item.batch = previous?.batch || null;
     const index = catalog.items.findIndex(x => x.id === id);
     if (index >= 0) catalog.items[index] = item; else catalog.items.unshift(item);
     editing = id;
@@ -445,11 +497,11 @@ $('editor-form').onsubmit = event => {
 $('remove-btn').onclick = async () => {
   if (uploadRunning || !editing) return;
   if (!await confirmAction('¿Quitar este proyecto?', 'Se quitará del borrador. El archivo se conserva y podrás recuperar versiones anteriores después de publicar.', 'Quitar proyecto')) return;
-  task(async () => { catalog.items = catalog.items.filter(x => x.id !== editing); if (catalog.hero.projectId === editing) catalog.hero.projectId = null; markDirty(); render(); await saveDraft(); editor.close(); toast('Proyecto quitado del borrador.'); });
+  task(async () => { catalog.items = catalog.items.filter(x => x.id !== editing); for (const r of catalog.reports || []) { r.projectIds = (r.projectIds || []).filter(id => id !== editing); if (r.kind === 'review' && r.scope === 'projects' && !r.projectIds.length) r.enabled = false; } if (catalog.hero.projectId === editing) catalog.hero.projectId = null; markDirty(); render(); await saveDraft(); editor.close(); toast('Proyecto quitado del borrador.'); });
 };
 $('add-btn').onclick = () => openEditor();
 $('search').oninput = render;
-$('nav-library').onclick = () => { filter = 'all'; $('search').value = ''; render(); };
+$('nav-library').onclick = () => { showPage('library'); filter = 'all'; $('search').value = ''; render(); };
 $('save-btn').onclick = () => task(async () => { await saveDraft(); toast('Borrador guardado.'); });
 $('preview-btn').onclick = () => {
   const preview = window.open('about:blank', '_blank');

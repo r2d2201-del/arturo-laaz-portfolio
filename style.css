@@ -841,6 +841,23 @@ section {
     color: var(--accent);
 }
 
+/* Editorial descriptions and client-reported evidence have distinct roles. */
+.card-info .card-metric { color: #bbb; line-height: 1.6; font-size: .9rem; display: block; }
+.client-evidence { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color); display: grid; gap: 7px; }
+.client-evidence strong { font-size: .78rem; color: var(--accent); line-height: 1.5; }
+.client-evidence span { font-size: .78rem; line-height: 1.5; color: #e3e3e3; }
+.client-evidence small { color: #aaa; font-size: .7rem; line-height: 1.5; }
+.client-evidence[hidden], .project-details[hidden] { display: none; }
+.project-details { padding: 0 24px 24px; font-size: .85rem; line-height: 1.7; color: #ddd; }
+.project-details p { margin: 9px 0; color: #ddd; }
+.project-evidence { border-top: 1px solid var(--border-color); margin-top: 16px; padding-top: 16px; }
+.project-evidence h4 { font-family: var(--font-body, sans-serif); color: var(--accent); font-size: .76rem; line-height: 1.5; margin: 0 0 9px; }
+.project-evidence .evidence-source, .project-evidence .evidence-scope { color: #aaa; font-size: .75rem; }
+.evidence-aggregate { margin-top: 18px; padding: 14px; background: #ffffff06; border: 1px solid var(--border-color); border-radius: 8px; }
+.video-modal .modal-container { max-height: 90svh; overflow-y: auto; }
+.video-modal .modal-video-wrapper { flex-shrink: 0; }
+.video-modal .modal-close { position: sticky; top: 12px; align-self: flex-end; flex: 0 0 36px; margin: 12px 12px -48px 0; z-index: 4; width: 36px; height: 36px; background: #080808eb; border-radius: 50%; line-height: 1; }
+
 /* Load More Button styling */
 .portfolio-load-more {
     display: flex;
@@ -1605,3 +1622,21 @@ section {
 .youtube-metric strong { display: block; font-size: 17px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.5; }
 .youtube-metric span { display: block; color: #aaa; font-size: 9px; line-height: 1.5; overflow-wrap: anywhere; }
 .youtube-metrics .youtube-metrics-status { font-size: 9px; color: #999; line-height: 1.5; margin: 12px 0 0; }
+
+/* Real client reviews: source, date and scope travel with the quote. */
+[hidden] { display: none !important; }
+.client-reviews { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; max-width: 1100px; margin: 40px auto 0; }
+.client-review { border: 1px solid #343434; background: #111; border-radius: 16px; padding: clamp(24px, 4vw, 48px); text-align: left; min-width: 0; }
+.review-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 22px; }
+.review-platform { color: var(--accent); font-size: .85rem; font-weight: 600; }
+.review-rating { color: #dedede; font-size: .8rem; }
+.client-review blockquote { font-size: clamp(1rem, 1.6vw, 1.35rem); line-height: 1.8; font-weight: 300; margin: 0 0 20px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.client-review .review-author { color: #fff; font-weight: 600; margin: 20px 0 4px; }
+.review-context, .review-date, .review-source-note, .review-scope { font-size: .78rem; color: #aaa; line-height: 1.7; margin: 6px 0; }
+.review-source { display: inline-block; margin-top: 18px; color: var(--accent); font-size: .85rem; text-decoration: underline; text-underline-offset: 4px; }
+.review-original { font-size: .78rem; color: #bbb; line-height: 1.8; }
+.review-original summary { cursor: pointer; }
+.review-original p { margin-top: 12px; white-space: pre-wrap; }
+.project-details .client-review { margin-top: 24px; padding: 20px; }
+.project-details .client-review blockquote { font-size: .95rem; }
+.testimonials-section { scroll-margin-top: 160px; }

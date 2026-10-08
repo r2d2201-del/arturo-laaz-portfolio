@@ -38,6 +38,7 @@
       <a class="brand" href="/admin/">ARTURO<span>.</span><small>STUDIO</small></a>
       <div class="workspace-label">TU ESPACIO</div>
       <button class="nav-item active" id="nav-library">▦ <span>Biblioteca</span><span id="nav-count">23</span></button>
+      <button class="nav-item" id="nav-feedback">❞ <span>Feedback de clientes</span></button>
       <button class="nav-item" id="categories-btn">☷ <span>Categorías</span></button>
       <button class="nav-item" id="history-btn">↶ <span>Versiones anteriores</span></button>
       <button class="nav-item" id="help-btn">? <span>Cómo usar el panel</span></button>
@@ -47,16 +48,22 @@
 
     <main>
       <header class="topbar"><span>ESTUDIO <span class="slash">/</span> PORTAFOLIO</span><span class="status-dot" id="connection-label">Espacio privado</span></header>
-      <section class="page-heading">
+      <nav class="studio-mobile-nav" aria-label="Secciones del estudio"><button id="mobile-library" class="active">Biblioteca</button><button id="mobile-feedback">Feedback de clientes</button></nav>
+      <section class="page-heading" id="library-heading">
         <div><p class="eyebrow">TU TRABAJO, EN PRIMER PLANO</p><h1>Tu <span>biblioteca.</span></h1><p class="muted">Añade, ordena y publica tus mejores videos.</p></div>
         <button class="primary" id="add-btn">＋ Añadir proyecto</button>
       </section>
 
+      <section class="page-heading" id="feedback-heading" hidden>
+        <div><p class="eyebrow">LA VOZ DE TUS CLIENTES</p><h1>Feedback <span>de clientes.</span></h1><p class="muted">Guarda sus comentarios, conserva la fuente y conecta cada uno con tu trabajo.</p></div>
+        <button class="primary" id="feedback-add">＋ Añadir reseña</button>
+      </section>
       <section class="publish-bar" aria-label="Estado de publicación">
         <div><span class="status-orb"></span><div><strong id="save-status">Cargando biblioteca…</strong><small id="publish-status">Los cambios se guardan como borrador.</small></div></div>
         <div class="publish-actions"><button id="save-btn" class="secondary">Guardar borrador</button><button id="preview-btn" class="secondary">Vista previa ↗</button><button id="publish-btn" class="primary">Publicar cambios</button></div>
       </section>
 
+      <div id="library-page">
       <div id="service-notice" class="notice" hidden></div>
       <section class="library-tools">
         <div id="category-filters" class="tabs" aria-label="Filtrar categoría"></div>
@@ -69,6 +76,13 @@
       </div>
       <section id="project-grid" class="project-grid" aria-label="Proyectos del portafolio"></section>
       <section id="empty-state" class="empty-state" hidden><span>↗</span><h2>Espacio para tu próximo trabajo.</h2><p>Prueba otra búsqueda o añade un proyecto.</p></section>
+      </div>
+      <section id="feedback-page" aria-label="Feedback de clientes" hidden>
+        <div class="feedback-intro"><div><h2>Un comentario. Su contexto.</h2><p>Las reseñas hablan de la colaboración. Los informes conservan resultados de campañas o batches. Vincula los videos desde aquí cuando estén en tu biblioteca.</p></div><button id="feedback-results-add" class="secondary">＋ Resultados de campaña</button></div>
+        <div class="feedback-toolbar"><p id="feedback-count" class="field-help"></p><label class="search"><span>⌕</span><input id="feedback-search" type="search" placeholder="Buscar cliente o comentario" aria-label="Buscar feedback"></label><button id="feedback-import" class="text-button">Importar feedback ↓</button><input id="feedback-import-file" type="file" accept=".json,application/json" hidden></div>
+        <div id="feedback-list" class="feedback-list"></div>
+        <p class="field-help">Las fuentes privadas se conservan para ti. En la web, cada reseña identifica su procedencia y solo muestra una valoración cuando existe en el original.</p>
+      </section>
       <footer class="studio-footer"><span>ARTURO STUDIO</span><button id="help-mobile" class="text-button">Cómo usar el panel</button><button id="history-mobile" class="text-button">Versiones anteriores</button><button id="export-btn" class="text-button">Exportar catálogo ↓</button></footer>
     </main>
   </div>
@@ -109,7 +123,20 @@
       <div id="source-preview" class="source-preview" hidden></div>
       <p id="source-note" class="field-help"></p>
       <div class="field-row"><div><label for="project-title">Título *</label><input id="project-title" required maxlength="140" placeholder="El nombre de tu proyecto"></div><div><label for="project-category">Categoría</label><select id="project-category" required></select></div></div>
-      <label for="project-description">Descripción breve o resultado</label><textarea id="project-description" rows="2" maxlength="300" placeholder="Qué hace especial a este trabajo"></textarea>
+      <label for="project-description">Descripción de tu trabajo</label><textarea id="project-description" rows="2" maxlength="300" placeholder="Qué pieza es y qué aportaste tú"></textarea>
+      <details id="editorial-panel" class="editorial-panel">
+        <summary>Mejorar título y descripción</summary>
+        <p class="field-help">Completa solo hechos confirmados. Recibirás tres opciones para elegir; los resultados del cliente se muestran por separado.</p>
+        <label for="brief-subject">Tema, producto o marca *</label><input id="brief-subject" maxlength="200" placeholder="Ej. Correas de reloj · Colección deportiva">
+        <label for="brief-contribution">Tu aportación real *</label><textarea id="brief-contribution" maxlength="400" rows="2" placeholder="Ej. Montaje y subtítulos; el cliente proporcionó el guion y el rodaje"></textarea>
+        <label for="brief-approach">Concepto y detalles de la pieza</label><textarea id="brief-approach" maxlength="600" rows="2" placeholder="Qué se muestra, formato y recursos que realmente utilizaste"></textarea>
+        <label for="brief-objective">Objetivo del encargo</label><input id="brief-objective" maxlength="300" placeholder="Ej. Presentar las opciones de personalización">
+        <p class="field-help">Al pedir sugerencias se envían esta ficha y los textos actuales al servicio de IA del estudio. No se envían videos ni fuentes privadas de los informes. Revisa las propuestas antes de usarlas.</p>
+        <button type="button" id="suggest-editorial" class="secondary">Sugerir título y descripción</button>
+        <p id="editorial-status" class="field-help" role="status"></p>
+        <div id="editorial-options" class="editorial-options"></div>
+      </details>
+      <p id="project-feedback-summary" class="field-help" hidden></p>
       <div class="field-row"><div><label for="project-aspect">Formato de la tarjeta</label><select id="project-aspect"><option value="portrait">Vertical</option><option value="landscape">Horizontal</option><option value="square">Cuadrado</option></select></div><div class="check-stack"><label><input id="project-visible" type="checkbox" checked> Mostrar en el portafolio</label><label><input id="project-featured" type="checkbox"> Usar como video de portada</label></div></div>
       <details id="english-details" open class="english-panel"><summary>Inglés automático · Editable</summary>
         <p class="field-help">Se genera al escribir y al guardar. Si lo corriges, conservamos tu versión; puedes volver a la sugerencia automática cuando quieras.</p>
@@ -146,6 +173,7 @@
     </ol>
     <p class="help-footnote"><strong>Inglés automático:</strong> se genera al escribir. Puedes corregirlo; tu versión se conservará hasta que elijas <strong>Usar traducción automática</strong>.</p>
     <p class="help-footnote"><strong>Categorías:</strong> abre <strong>Editar categorías</strong> para crear una nueva o cambiar sus nombres en español e inglés. Guarda el borrador y publica cuando esté listo.</p>
+    <p class="help-footnote"><strong>Feedback de clientes:</strong> registra reseñas con su fuente o resultados de campaña. Vincula desde esa sección los videos ya subidos y selecciona qué reseñas se mostrarán en la web. No necesitas añadir feedback al subir un proyecto.</p>
     <p class="help-footnote"><strong>Métricas:</strong> en un proyecto de YouTube, activa <strong>Mostrar métricas de YouTube</strong> para mostrar visualizaciones, likes y comentarios. Requiere conectar YouTube Data API una vez. Guarda el proyecto, revisa Vista previa y publica.</p>
     <p class="help-footnote">Puedes recuperar una publicación desde <strong>Versiones anteriores</strong>. Tus borradores guardados estarán disponibles cuando entres desde otra computadora.</p>
   </dialog>

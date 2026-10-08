@@ -5,6 +5,7 @@ import { verifyPassword, createSession, checkSession, sessionToken, sessionCooki
 import { cloudConfigured, uploadTicket, inspectUpload, preparePreview } from './cloudinary.mjs';
 import { translateTexts, translationConfigured } from './translate.mjs';
 import { youtubeMetrics, youtubeMetricsConfigured } from './youtube-metrics.mjs';
+import { suggestEditorial } from './editorial.mjs';
 
 const localMedia = new Set([seed.hero.preview, ...seed.items.flatMap(x => [x.source.url, x.source.preview, x.source.poster])].filter(Boolean));
 const json = (value, status = 200, headers = {}) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...headers } });
@@ -114,6 +115,9 @@ export function createApi({ store, env = process.env, fetcher = fetch }) {
       if (path === '/api/translate' && method === 'POST') {
         const { texts } = await body(req);
         return json(await translateTexts(texts, { store, env, fetcher }));
+      }
+      if (path === '/api/editorial-suggestions' && method === 'POST') {
+        return json(await suggestEditorial(await body(req), { store, env, fetcher }));
       }
       if (path === '/api/logout' && method === 'POST') {
         await store.remove(`sessions/${digest(sessionToken(req))}`);

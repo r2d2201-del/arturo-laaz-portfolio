@@ -1,5 +1,83 @@
 import { thumbnail } from './lib/catalog.mjs';
 import { metricsText } from './lib/youtube-metrics-view.mjs';
+import { batchEvidence, reviewEvidence, feedbackDate, platforms } from './lib/client-results.mjs';
+let currentCatalog;
+
+export function renderClientResults() {
+  if (!currentCatalog) return;
+  const lang = document.documentElement.lang || 'es';
+  document.querySelectorAll('[data-batch-project]').forEach(box => {
+    const item = currentCatalog.items.find(i => i.id === box.dataset.batchProject);
+    const evidence = item && batchEvidence(currentCatalog, item, lang);
+    const reviews = item ? reviewEvidence(currentCatalog, item.id) : [];
+    box.replaceChildren(); box.hidden = !evidence && !reviews.length;
+    if (!evidence) { if (reviews.length) box.append(element('strong', '', lang === 'en' ? 'Client feedback available' : 'Comentario del cliente disponible')); return; }
+    box.append(element('strong', '', evidence.label));
+    if (evidence.views) box.append(element('span', '', evidence.views));
+    box.append(element('small', '', evidence.attribution));
+  });
+  renderTestimonials();
+}
+export function renderProjectDetails(id) {
+  const box = document.getElementById('project-details');
+  if (!box) return;
+  box.replaceChildren();
+  const item = currentCatalog?.items.find(i => i.id === id);
+  if (!item) { box.hidden = true; return; }
+  const lang = document.documentElement.lang || 'es';
+  const description = lang === 'en' ? item.descriptionEn || item.description : item.description;
+  if (description) box.append(element('p', 'project-description', description));
+  const evidence = batchEvidence(currentCatalog, item, lang);
+  if (evidence) {
+    const section = element('section', 'project-evidence');
+    section.append(element('h4', '', evidence.heading), element('strong', '', evidence.title), element('p', 'evidence-source', evidence.attribution));
+    for (const detail of evidence.details) section.append(element('p', '', detail));
+    section.append(element('p', 'evidence-scope', evidence.scope));
+    if (evidence.aggregate) {
+      const group = element('div', 'evidence-aggregate');
+      group.append(element('h4', '', evidence.aggregateHeading), element('p', '', evidence.aggregate)); section.append(group);
+    }
+    box.append(section);
+  }
+  for (const review of reviewEvidence(currentCatalog, item.id)) box.append(reviewCard(review, lang, true));
+  box.hidden = !box.childNodes.length;
+}
+
+function reviewCard(review, lang, linked = false) {
+  const en = lang === 'en';
+  const card = element('article', 'client-review');
+  const top = element('div', 'review-top');
+  const platform = platforms[review.platform] || (en ? 'Client feedback' : 'Comentario del cliente');
+  top.append(element('span', 'review-platform', review.platform === 'other' ? (en ? 'Client feedback' : 'Comentario del cliente') : platform));
+  if (review.rating != null) top.append(element('span', 'review-rating', `${review.rating}/5 · ${en ? 'Client rating' : 'Valoración del cliente'}`));
+  card.append(top);
+  const translated = lang !== review.language && (en ? review.quoteEn : review.quoteEs);
+  const quote = element('blockquote', '', translated || review.quote); quote.lang = translated ? lang : review.language; card.append(quote);
+  if (translated) {
+    const details = element('details', 'review-original');
+    details.append(element('summary', '', en ? 'Translated from Spanish · Read original' : 'Traducción del inglés · Leer original'));
+    const original = element('p', '', review.quote); original.lang = review.language; details.append(original); card.append(details);
+  }
+  const attribution = review.client === review.attribution ? review.attribution : review.attribution + ' · ' + review.client;
+  card.append(element('p', 'review-author', attribution));
+  if (review.context) card.append(element('p', 'review-context', review.context));
+  const datePrefix = review.dateKind === 'contract-end' ? (en ? 'Contract ended: ' : 'Cierre del contrato: ') : (en ? 'Comment: ' : 'Comentario: ');
+  card.append(element('p', 'review-date', datePrefix + feedbackDate(review, lang)));
+  if (linked) card.append(element('p', 'review-scope', review.scope === 'projects' ? (en ? 'Feedback about the linked project(s).' : 'Comentario sobre los proyectos vinculados.') : (en ? 'Feedback about the overall collaboration with this client.' : 'Comentario sobre la colaboración general con este cliente.')));
+  if (review.sourceAccess === 'public' && review.sourceUrl) {
+    const link = element('a', 'review-source', en ? 'View source ↗' : 'Consultar fuente original ↗'); link.href = review.sourceUrl; link.target = '_blank'; link.rel = 'noopener noreferrer'; card.append(link);
+  } else card.append(element('p', 'review-source-note', en ? 'Private feedback shared by Arturo · Source is not public.' : 'Comentario privado compartido por Arturo · Fuente no pública.'));
+  return card;
+}
+export function renderTestimonials() {
+  const section = document.getElementById('testimonials');
+  const list = document.getElementById('client-reviews');
+  if (!section || !list) return;
+  const reviews = currentCatalog ? reviewEvidence(currentCatalog) : [];
+  section.hidden = !reviews.length;
+  document.querySelectorAll('a[href="#testimonials"]').forEach(a => { a.hidden = !reviews.length; });
+  list.replaceChildren(...reviews.map(r => reviewCard(r, document.documentElement.lang || 'es')));
+}
 
 const metricsById = new Map();
 export function renderYouTubeMetrics() {
@@ -63,6 +141,7 @@ export async function loadPortfolio() {
 }
 
 export function renderCatalog(catalog) {
+  currentCatalog = catalog;
   const grid = document.getElementById('portfolio-grid');
   const filters = document.getElementById('portfolio-filters');
   if (!grid || !filters) return;
@@ -115,8 +194,11 @@ export function renderCatalog(catalog) {
     overlay.append(play); media.append(container, overlay);
     const info = element('div', 'card-info');
     const metric = element('div', 'card-metric');
-    metric.append(element('i', 'fa-solid fa-eye'), document.createTextNode(` ${item.description}`));
+    metric.append(document.createTextNode(item.description));
     info.append(element('span', 'card-category', cat?.name || ''), element('h3', 'card-title', item.title), metric);
+    if (item.batch || reviewEvidence(catalog, item.id).length) {
+      const evidence = element('div', 'client-evidence'); evidence.dataset.batchProject = item.id; info.append(evidence);
+    }
     if (item.source.type === 'youtube' && item.showYoutubeMetrics === true) {
       const metrics = element('div', 'youtube-metrics');
       metrics.dataset.metricsId = item.source.youtubeId;
@@ -127,6 +209,7 @@ export function renderCatalog(catalog) {
   }
   if (!grid.children.length) grid.append(element('p', 'portfolio-empty', 'Próximamente, nuevos proyectos.'));
   renderYouTubeMetrics();
+  renderClientResults();
   const featured = catalog.items.find(x => x.id === catalog.hero.projectId && x.visible);
   const hero = document.getElementById('hero-preview-video');
   if (hero) {

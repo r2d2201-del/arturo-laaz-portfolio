@@ -35,7 +35,27 @@ En `npm run dev`, las variables de AI Gateway no se inyectan. Para traducciones 
 
 Quitar un proyecto no destruye sus medios. Los originales y versiones conservadas en Cloudinary siguen ocupando almacenamiento hasta que se gestionen allí. Los borradores con cambios sin guardar se recuperan en el mismo navegador; los borradores guardados se comparten entre computadoras.
 
-### Métricas de YouTube
+### Sugerencias de títulos y descripciones
+
+En **Editar proyecto → Mejorar título y descripción**, completa el tema/producto y tu aportación real. Concepto y objetivo son opcionales. **Sugerir título y descripción** propone tres alternativas y señala una recomendación con su motivo. **Usar esta opción** modifica los campos del editor, permite corregirlos y activa el inglés automático existente. Guarda el proyecto y publica mediante el flujo habitual.
+
+La ficha se conserva con el proyecto, es privada y no aparece en `/api/catalog`. El generador recibe únicamente esa ficha y los títulos/descripciones actuales; no recibe videos, notas privadas, informes ni mensajes de Slack. Los textos anteriores se consideran borradores no verificados. Las propuestas evitan resultados y métricas: el respaldo del cliente tiene su propio bloque. Revisar los hechos sigue siendo necesario; la IA no verifica rendimiento ni garantiza qué texto convertirá mejor.
+
+`POST /api/editorial-suggestions` exige sesión y origen válido. Reutiliza la configuración de IA de las traducciones, mantiene las claves en servidor, cachea por contenido y limita a 40 generaciones nuevas por hora para el sitio. Los errores conservan la ficha y los textos. Una respuesta que llega después de editar la ficha o cerrar el proyecto no se aplica; tampoco se permite aplicar dos veces una respuesta antigua. La generación real local requiere `OPENAI_API_KEY` y `OPENAI_BASE_URL`, igual que las traducciones.
+
+### Feedback de clientes
+
+**Feedback de clientes** es una sección independiente de Biblioteca. El formulario de subida no pide resultados ni batches. Puedes crear una reseña, registrar resultados de campaña o importar un archivo JSON. Guardar feedback modifica el borrador; **Vista previa → Publicar cambios** mantiene el control de lo que aparece en la web.
+
+- **Reseñas:** guarda el comentario literal, cliente/atribución, plataforma, fecha y su significado (comentario o cierre del contrato). La valoración es opcional, nunca se inventan estrellas. Elige si mostrarla en la sección pública de reseñas y/o vincular videos existentes. Distingue comentarios sobre la colaboración de comentarios sobre proyectos específicos. Las traducciones manuales se identifican como tales y permiten leer el original.
+- **Fuentes:** una reseña pública incluye un enlace HTTPS al perfil o comentario original; los enlaces de Upwork/LinkedIn deben pertenecer a su plataforma. Una fuente privada se conserva en notas privadas y se presenta públicamente como comentario privado compartido por Arturo. No se etiqueta ningún comentario como “verificado” automáticamente.
+- **Resultados de campaña:** conserva cliente, fecha, atribución y batches. Abre **Videos de la biblioteca** dentro del informe para asociar cada video a su batch confirmado. Los datos de batch no se atribuyen a una versión individual. El porcentaje del conjunto se explica aparte en el reproductor. Ocultar el informe conserva los vínculos.
+
+El catálogo público usa una lista explícita de campos permitidos: excluye fuentes privadas, fichas editoriales, feedback deshabilitado, batches sin videos visibles y referencias a videos ocultos. Las reseñas de proyectos sin videos visibles tampoco se muestran. Al retirar el último proyecto de una reseña de alcance específico se deshabilita esa reseña hasta revisarla. Los catálogos anteriores siguen siendo compatibles.
+
+La sección pública ya no contiene testimonios ficticios ni carrusel de ejemplo. Se oculta si no hay reseñas seleccionadas o si el catálogo no carga. Los informes y reseñas reales preparados para importar están en `docs/portfolio-cards/`; no forman parte del sitio estático ni se cargan automáticamente en producción. El comentario de Upwork de julio de 2025 conserva el texto y la valoración observados en el perfil público; no se ha adivinado la identidad del cliente ni su asociación a un video.
+
+### Configuración y funcionamiento de métricas de YouTube
 
 En **Editar proyecto → Enlace de YouTube**, activa **Mostrar métricas de YouTube**. La opción se guarda por proyecto y se publica con el resto del borrador. Funciona con videos y Shorts; no se ofrece para archivos subidos. Muestra visualizaciones, likes y el número de comentarios, no el contenido de los comentarios. La descripción editorial se conserva por separado.
 
