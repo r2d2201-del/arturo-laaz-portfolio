@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { aiServiceError } from './ai-errors.mjs';
+import { fetchAi } from './ai-request.mjs';
 
 const limits = { title: 140, description: 300, name: 80 };
 const error = (status, message) => Object.assign(new Error(message), { status });
@@ -29,7 +30,7 @@ export async function translateTexts(input, { store, env, fetcher = fetch }) {
     const base = env.OPENAI_BASE_URL.replace(/\/$/, '').replace(/\/v1$/, '');
     let response;
     try {
-      response = await fetcher(`${base}/v1/chat/completions`, {
+      response = await fetchAi(fetcher, `${base}/v1/chat/completions`, {
         method: 'POST', signal: AbortSignal.timeout(30_000),
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.OPENAI_API_KEY}` },
         body: JSON.stringify({
@@ -45,7 +46,7 @@ export async function translateTexts(input, { store, env, fetcher = fetch }) {
           } } },
         }),
       });
-    } catch { throw error(503, 'La traducción tardó demasiado. Tus textos se conservan; pulsa Reintentar.'); }
+    } catch (e) { if (e.status) throw e; throw error(503, 'La traducción tardó demasiado. Tus textos se conservan; pulsa Reintentar.'); }
     if (!response.ok) throw await aiServiceError(response);
     let translations;
     try {
